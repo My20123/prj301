@@ -47,7 +47,7 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("listCC", listC);
         request.setAttribute("p", last);
         
-        request.getRequestDispatcher("Home_1.jsp").forward(request, response);
+        request.getRequestDispatcher("Home.jsp").forward(request, response);
         //404 -> url
         //500 -> jsp properties
     }

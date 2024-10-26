@@ -40,7 +40,7 @@ public class DetailServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
        String id = request.getParameter("pid");
         DAO dao = new DAO();
-        Products p = dao.getAllProductsByIDCategories(id);
+        Products p = dao.getAllProductsByID(id);
         List<Categories> listC = dao.getAllCategories();
         Products last = dao.getLast();
 

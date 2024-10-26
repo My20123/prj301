@@ -38,7 +38,7 @@ public class LoadServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String id = request.getParameter("pid");
         DAO dao = new DAO();
-        Products p = dao.getAllProductsByIDCategories(id);
+        Products p = dao.getAllProductsByID(id);
         List<Categories> listC = dao.getAllCategories();
 
         request.setAttribute("detail", p);

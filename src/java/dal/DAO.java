@@ -87,7 +87,7 @@ public class DAO {
         }
         return list;
     }
-    public Products getAllProductsByIDCategories(String id) {
+    public Products getAllProductsByID(String id) {
         List<Products> list = new ArrayList<>();
         String query = "select * from products where id = ?";
         try {
@@ -107,6 +107,27 @@ public class DAO {
         } catch (Exception e) {
         }
        return null;
+    }
+    public List<Products> getProductByCID(String cid) {
+        List<Products> list = new ArrayList<>();
+        String query = "select * from products\n"
+                + "where cateID = ?";
+        try {
+            con = new DBContext().getConnection();//mo ket noi voi sql
+            ps = con.prepareStatement(query);
+            ps.setString(1, cid);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Products(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getString(6)));
+            }
+        } catch (Exception e) {
+        }
+        return list;
     }
 
     public List<Categories> getAllCategories() {

@@ -48,6 +48,10 @@
         <servlet-name>LoadServlet</servlet-name>
         <servlet-class>controller.LoadServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>WelcomeServlet</servlet-name>
+        <servlet-class>controller.WelcomeServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -96,6 +100,10 @@
     <servlet-mapping>
         <servlet-name>LoadServlet</servlet-name>
         <url-pattern>/load</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WelcomeServlet</servlet-name>
+        <url-pattern>/welcome</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/home</welcome-file>

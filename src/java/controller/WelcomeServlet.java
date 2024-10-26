@@ -1,9 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package control;
+package controller;
 
 import dal.DAO;
 import model.Categories;
@@ -19,10 +18,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author trinh
+ * @author tra my
  */
-@WebServlet(name = "CategoriesServelet", urlPatterns = {"/categories"})
-public class CategoriesServelet extends HttpServlet {
+public class WelcomeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,21 +34,20 @@ public class CategoriesServelet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String cateID = request.getParameter("cid");
-        //da lay dc category id ve roi
+        //b1: get data from dao
         DAO dao = new DAO();
-        List<Products> list = dao.getProductByCID(cateID);
+        List<Products> list = dao.getAllProducts();
         List<Categories> listC = dao.getAllCategories();
         Products last = dao.getLast();
-        
-        
-        
+        request.getSession().getAttribute("acc");
+        //b2: set data to jsp
         request.setAttribute("listP", list);
         request.setAttribute("listCC", listC);
         request.setAttribute("p", last);
-        request.setAttribute("tag", cateID);
-        request.getRequestDispatcher("Home.jsp").forward(request, response);
-    }
+        
+        request.getRequestDispatcher("Welcome.jsp").forward(request, response);
+        }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
