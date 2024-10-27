@@ -14,6 +14,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import model.Accounts;
+import model.Order_details;
+import model.Orders;
 
 /**
  *
@@ -297,5 +299,95 @@ public class DAO {
             ps.executeUpdate();
         } catch (Exception e) {
         }
+    }
+ 
+    public List<Orders> getAllOrders() {
+        List<Orders> list = new ArrayList<>();
+        String sql = "SELECT * FROM ORDERS";
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Orders(
+                        rs.getInt("id"),
+                        rs.getInt("account_id"),
+                        rs.getLong("total_price"),
+                        rs.getString("delivery_address"),
+                        rs.getString("receiver_name"),
+                        rs.getString("receiver_phone"),
+                        rs.getString("status"),
+                        rs.getString("note")
+                ));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public int saveOrder(Orders order) {
+        String sql = "INSERT INTO Orders ([uID], [total_price], [address], [receiver_name], [receiver_phone],[status] ,[note])\n"
+                + "VALUES (\n"
+                + order.getAccount_id() + ", "
+                + order.getTotal_price() + ", "
+                + "'" + order.getDelivery_address() + "', "
+                + "'" + order.getReceiver_name() + "', "
+                + "'" + order.getReceiver_phone()+ "', "
+                + "'Processing', \n"
+                + "'" + order.getNote()+ "'"
+                + ");";
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(sql);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1); // Return generated order ID
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return -1;
+    }
+    public List<Order_details> getAllOrderDetails() {
+        List<Order_details> list = new ArrayList<>();
+        String sql = "SELECT * FROM ORDER_DETAILS";
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Order_details(
+                        rs.getInt("id"),
+                        rs.getInt("product_id"),
+                        rs.getInt("order_id"),
+                        rs.getInt("quantity"),
+                        rs.getLong("price")
+                ));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return list;
+    }
+
+    public String saveOrderDetail(Order_details orderDetail) {
+        String sql = "INSERT INTO Order_details ([pid], [oid], [quantity], [price])\n"
+                + "VALUES(\n"
+                + orderDetail.getProduct_id() + ", \n"
+                + orderDetail.getOrder_id() + ", \n"
+                + orderDetail.getQuantity() + ", \n"
+                + orderDetail.getPrice() + " \n"
+                + ");";
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e);
+            return "Database error!";
+        }
+        return "";
     }
 }

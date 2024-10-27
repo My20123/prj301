@@ -52,6 +52,10 @@
         <servlet-name>WelcomeServlet</servlet-name>
         <servlet-class>controller.WelcomeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateCartServlet</servlet-name>
+        <servlet-class>controller.UpdateCartServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -104,6 +108,10 @@
     <servlet-mapping>
         <servlet-name>WelcomeServlet</servlet-name>
         <url-pattern>/welcome</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateCartServlet</servlet-name>
+        <url-pattern>/updatecart</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/home</welcome-file>
