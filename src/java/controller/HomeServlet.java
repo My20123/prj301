@@ -35,18 +35,14 @@ public class HomeServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-//        //b1: get data from dao
-//        DAO dao = new DAO();
-//        List<Products> list = dao.getAllProducts();
-//        List<Categories> listC = dao.getAllCategories();
-//        Products last = dao.getLast();
-//        request.getSession().getAttribute("acc");
-//        //b2: set data to jsp
-//        request.setAttribute("listP", list);
-//        request.setAttribute("listCC", listC);
-//        request.setAttribute("p", last);
-//        
-//        request.getRequestDispatcher("Home.jsp").forward(request, response);
+        //b1: get data from dao
+        DAO dao = new DAO();
+        List<String> listS=dao.getAllStations();
+        request.getSession().getAttribute("acc");
+        //b2: set data to jsp
+        request.setAttribute("listS", listS);
+        
+        request.getRequestDispatcher("Home.jsp").forward(request, response);
 //        //404 -> url
 //        //500 -> jsp properties
     }

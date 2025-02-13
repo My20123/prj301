@@ -65,7 +65,7 @@
                             <a href="about.html" class="nav-item nav-link ">Thông tin đặt chỗ</a>
                             <a href="service.html" class="nav-item nav-link">Giờ tàu-Giá vé</a>
                             <a href="package.html" class="nav-item nav-link">Quy định</a>
-                            <!--                    <div class="nav-item dropdown">
+                                                <div class="nav-item dropdown">
                                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                                     <div class="dropdown-menu m-0">
                                                         <a href="destination.html" class="dropdown-item">Destination</a>
@@ -74,7 +74,7 @@
                                                         <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                                                         <a href="404.html" class="dropdown-item">404 Page</a>
                                                     </div>
-                                                </div>-->
+                                                </div>
                             <a href="contact.html" class="nav-item nav-link">Liên hệ</a>
                         </div>
                     </div>
