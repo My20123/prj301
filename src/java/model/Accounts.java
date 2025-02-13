@@ -10,6 +10,11 @@ package model;
  */
 public class Accounts {
     private int id;
+
+    @Override
+    public String toString() {
+        return "Accounts{" + "id=" + id + ", uname=" + uname + ", umail=" + umail + ", pass=" + pass + ", uphone=" + uphone + ", isStaff=" + isStaff + ", isAdmin=" + isAdmin + '}';
+    }
     private String uname;
     private String umail;
     private String pass;
