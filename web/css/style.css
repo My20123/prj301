@@ -671,7 +671,6 @@ input[type="submit"],
 input[type="reset"],
 input[type="file"],
 button {
-  background-image: none;
   background: var(--dark-color);
   text-decoration: none !important;
   display: inline-block;
