@@ -47,52 +47,46 @@
                                 <h4 class="modal-title">Edit Product</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             </div>
-                            <div class="modal-body">					
+                            <div class="modal-body">
                                 <div class="form-group">
-                                    <label>ID</label>
-                                    <input value="${detail.id}" name="id" type="text" class="form-control" readonly required>
+                                    <label for="id">ID</label>  <input value="${detail.id}" id="id" name="id" type="text" class="form-control" readonly required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Name</label>
-                                    <input value="${detail.name}" name="name" type="text" class="form-control" required>
+                                    <label for="name">Name</label> <input value="${detail.name}" id="name" name="name" type="text" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Image</label>
-                                    <input value="${detail.image}" name="image" type="text" class="form-control" required>
+                                    <label for="image">Image</label> <input value="${detail.image}" id="image" name="image" type="text" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Price</label>
-                                    <input value="${detail.price}" name="price" type="text" class="form-control" required>
+                                    <label for="price">Price</label> <input value="${detail.price}" id="price" name="price" type="text" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Title</label>
-                                    <textarea name="title" class="form-control" required>${detail.title}</textarea>
+                                    <label for="title">Title</label> <textarea id="title" name="title" class="form-control" required>${detail.title}</textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea name="description" class="form-control" required>${detail.description}</textarea>
+                                    <label for="description">Description</label> <textarea id="description" name="description" class="form-control" required>${detail.description}</textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label>Category</label>
-                                    <select name="category" class="form-select" aria-label="Default select example">
+                                    <label for="category">Category</label> <select id="category" name="category" class="form-select" aria-label="Default select example">
                                         <c:forEach items="${listCC}" var="o">
                                             <option value="${o.cid}">${o.cname}</option>
                                         </c:forEach>
                                     </select>
                                 </div>
+                            </div>
 
-                            </div>
-                            <div class="modal-footer">
-                                <input type="submit" class="btn btn-success" value="Edit">
-                            </div>
-                        </form>
                     </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success" value="Edit">
+                    </div>
+                    </form>
                 </div>
             </div>
-
         </div>
 
+    </div>
 
-        <script src="js/manager.js" type="text/javascript"></script>
-    </body>
+
+    <script src="js/manager.js" type="text/javascript"></script>
+</body>
 </html>

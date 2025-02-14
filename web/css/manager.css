@@ -146,8 +146,6 @@ table.table .avatar {
 .custom-checkbox label:before{
     width: 18px;
     height: 18px;
-}
-.custom-checkbox label:before {
     content: '';
     margin-right: 10px;
     display: inline-block;
