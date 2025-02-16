@@ -16,6 +16,10 @@
         <servlet-name>SearchTrainServlet</servlet-name>
         <servlet-class>controller.SearchTrainServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>RoutesViewServlet</servlet-name>
+        <servlet-class>controller.RoutesViewServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -31,6 +35,10 @@
     <servlet-mapping>
         <servlet-name>SearchTrainServlet</servlet-name>
         <url-pattern>/searchtrain</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoutesViewServlet</servlet-name>
+        <url-pattern>/routeview</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/home</welcome-file>

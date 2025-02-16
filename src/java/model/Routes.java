@@ -5,6 +5,8 @@
 package model;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
  *
@@ -13,7 +15,9 @@ import java.util.HashMap;
 public class Routes {
     private int id;
     private String from_station, to_station;
-    private HashMap<String,Integer> thr_station;
+    private LinkedHashMap<String,Integer> thr_station;
+    
+   
 
     @Override
     public String toString() {
@@ -23,7 +27,7 @@ public class Routes {
     public Routes() {
     }
 
-    public Routes(int id, String from_station, String to_station, HashMap<String, Integer> thr_station) {
+    public Routes(int id, String from_station, String to_station, LinkedHashMap<String, Integer> thr_station) {
         this.id = id;
         this.from_station = from_station;
         this.to_station = to_station;
@@ -58,7 +62,7 @@ public class Routes {
         return thr_station;
     }
 
-    public void setThr_station(HashMap<String, Integer> thr_station) {
+    public void setThr_station(LinkedHashMap<String, Integer> thr_station) {
         this.thr_station = thr_station;
     }
     

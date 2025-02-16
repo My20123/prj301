@@ -11,7 +11,7 @@
 
     <head>
         <meta charset="utf-8">
-        <title>Trang chủ</title>
+        <title>VietTrains</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
         <meta content="" name="keywords">
         <meta content="" name="description">
@@ -61,20 +61,22 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="index_v1.html" class="nav-item nav-link active">Trang chủ</a>
+                            <a href="home" class="nav-item nav-link active">Trang chủ</a>
                             <a href="about.html" class="nav-item nav-link ">Thông tin đặt chỗ</a>
-                            <a href="service.html" class="nav-item nav-link">Giờ tàu-Giá vé</a>
+                            <a href="ScheduleDetailSearch.jsp" class="nav-item nav-link">Giờ tàu-Giá vé</a>                            
+                            <a href="routesview" class="nav-item nav-link">Các tuyến đường</a>
+                            <a href="TicketVerifi.jsp" class="nav-item nav-link">Kiểm tra vé</a>
                             <a href="package.html" class="nav-item nav-link">Quy định</a>
-                                                <div class="nav-item dropdown">
-                                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                                                    <div class="dropdown-menu m-0">
-                                                        <a href="destination.html" class="dropdown-item">Destination</a>
-                                                        <a href="booking.html" class="dropdown-item">Booking</a>
-                                                        <a href="team.html" class="dropdown-item">Travel Guides</a>
-                                                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                                        <a href="404.html" class="dropdown-item">404 Page</a>
-                                                    </div>
-                                                </div>
+                            <!--                                                <div class="nav-item dropdown">
+                                                                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                                                                                <div class="dropdown-menu m-0">
+                                                                                    <a href="destination.html" class="dropdown-item">Destination</a>
+                                                                                    <a href="booking.html" class="dropdown-item">Booking</a>
+                                                                                    <a href="team.html" class="dropdown-item">Travel Guides</a>
+                                                                                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                                                                    <a href="404.html" class="dropdown-item">404 Page</a>
+                                                                                </div>
+                                                                            </div>-->
                             <a href="contact.html" class="nav-item nav-link">Liên hệ</a>
                         </div>
                     </div>
@@ -174,8 +176,8 @@
                                                                     <div class="date-picker">
                                                                         <div class="SingleDatePickerInput SingleDatePickerInput_1">
                                                                             <div class="DateInput DateInput_1">
-                                                                                <p>Thời gian đi <input type="date" id="datepicker"></p>
-                                                                                <p>Thời gian về <input type="date" id="datepicker"></p>
+                                                                                <p>Thời gian đi <input type="date" id="input_from"></p>
+                                                                                <p>Thời gian về <input type="date" id="input_to"></p>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -217,7 +219,7 @@
                                                                                         <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-3-placeholder" style="margin-left: 25px;">Ga đến</div>
                                                                                         <div class="search-station-input-wrapper">
                                                                                             <div class="react-select__input-container css-19bb58m" data-value="">
-                                                                                                <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="to_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-3-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1; margin-left:40px;  width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px; outline: 0px; padding: 0px;">
+                                                                                                <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="to_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-3-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1; width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px; margin-left:40px ;outline: 0px; padding: 0px;">
                                                                                                 <datalist id="stations">
                                                                                                     <c:forEach items="${listS}" var="o">
                                                                                                         <option value="${o}">
@@ -267,19 +269,22 @@
 
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
-        
+
         <!-- Swap data Javascript -->
         <script>
-        function swapData() {
-            // Lấy giá trị từ các input
-            var gaDi = document.getElementById("from_station").value;
-            var gaDen = document.getElementById("to_station").value;
+                                                                                function swapData() {
+                                                                                    // Lấy giá trị từ các input
+                                                                                    var gaDi = document.getElementById("from_station").value;
+                                                                                    var gaDen = document.getElementById("to_station").value;
 
-            // Đổi giá trị giữa hai input
-            document.getElementById("from_station").value = gaDen;
-            document.getElementById("to_station").value = gaDi;
-        }
+                                                                                    // Đổi giá trị giữa hai input
+                                                                                    document.getElementById("from_station").value = gaDen;
+                                                                                    document.getElementById("to_station").value = gaDi;
+                                                                                }
+
+
+        </script>
     </script>
-    </body>
+</body>
 
 </html>
