@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import model.*;
 
@@ -64,6 +66,50 @@ public class DAO {
         return list;
     }
 
+    public List getAllRoutes() {
+        List<Routes> routes = new ArrayList<>();
+        List<Integer> listid = new ArrayList<>();
+
+        try {
+            String query = "SELECT * FROM Routes";
+            con = new DBContext().getConnection();//mo ket noi voi sql
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String query1 = "select * from Routes_data where id=?";
+                PreparedStatement ps1 = con.prepareStatement(query1);
+                ps1.setInt(1, id);
+                ResultSet rs1 = ps1.executeQuery();
+                LinkedHashMap< String, Integer> thr_stations = new LinkedHashMap<>();
+
+                while (rs1.next()) {
+                    thr_stations.put(rs1.getString("route_key"), rs1.getInt("value"));
+                }
+                routes.add(new Routes(id, rs.getString("from_station"), rs.getString("to_station"), thr_stations));
+            }
+
+        } catch (Exception e) {
+        }
+
+        return routes;
+    }
+
+    public List getAllTrains() {
+        List<String> list = new ArrayList<>();
+        try {
+            String query = "SELECT id FROM Trains;";
+            con = new DBContext().getConnection();//mo ket noi voi sql
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(rs.getString("route_key"));
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
     public Accounts login(String user, String pass) {
 
         try {
@@ -102,9 +148,10 @@ public class DAO {
                 int rid = rs.getInt(1);
                 String from_station = rs.getString(2);
                 String to_station = rs.getString(3);
-                HashMap<String, Integer> thr_station = new HashMap<>();
-                String query1 = "select route_key, value from Routes_data where id=1";
+                LinkedHashMap<String, Integer> thr_station = new LinkedHashMap<>();
+                String query1 = "select route_key, value from Routes_data where id=?";
                 PreparedStatement ps1 = con.prepareStatement(query1);
+                ps.setInt(1, rid);
                 ResultSet rs1 = ps1.executeQuery();
                 while (rs1.next()) {
                     String route_key = rs1.getString("route_key");
@@ -117,6 +164,7 @@ public class DAO {
         }
         return list;
     }
+    
 
     public Accounts checkAccountExist(String user) {
         String query = "select * from accounts where [uname] = ?";
@@ -153,7 +201,25 @@ public class DAO {
 
         }
     }
-//
+public String searchTrainsWithRid(int rid){
+    String trids= "";
+    try {
+        String query = "SELECT trid FROM Schedules where rid = ?;";
+            con = new DBContext().getConnection();//mo ket noi voi sql
+            ps = con.prepareStatement(query);
+            ps.setInt(1, rid);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                if (rs.isLast()) {
+                    trids+=rs.getString(1);
+                }else
+                trids+=rs.getString(1)+"-";
+            }
+        
+    } catch (Exception e) {
+    }
+    return trids;
+}
 
     public List searchSchedules(List<Routes> routes, Date date) throws Exception {
         List<Schedules> schedulesList = new ArrayList<>();
@@ -189,13 +255,14 @@ public class DAO {
 
     public static void main(String[] args) throws ParseException, Exception {
         DAO dao = new DAO();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = "2025-02-22";
-        Date parsedDate = sdf.parse(dateString);
-        List<Schedules> list = dao.searchSchedules(dao.searchRoute("Hà Nội", "Sài Gòn"), parsedDate);
-        for (Schedules s : list) {
-            System.out.println(s);
-        }
+        System.out.println(dao.searchTrainsWithRid(1));
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        String dateString = "2025-02-22";
+//        Date parsedDate = sdf.parse(dateString);
+//        List<Schedules> list = dao.searchSchedules(dao.searchRoute("Hà Nội", "Sài Gòn"), parsedDate);
+//        for (Schedules s : list) {
+//            System.out.println(s);
+//        }
 //        System.out.println(dao.login("My", "123456"));
 
 //        System.out.println(list);

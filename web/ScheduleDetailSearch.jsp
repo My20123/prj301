@@ -1,6 +1,6 @@
 <%-- 
-    Document   : SearchResult
-    Created on : Feb 12, 2025, 7:22:54 PM
+    Document   : RoutesTable
+    Created on : Feb 13, 2025, 2:04:40 PM
     Author     : tra my
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -38,6 +38,36 @@
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"> 
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+
+body{
+    font-family: 'Open Sans', sans-serif;
+    
+}
+.search{
+  
+  top:6px;
+  left:10px;
+}
+
+.form-control{
+    
+    border:none;
+    padding-left:32px;
+}
+
+.form-control:focus{
+    
+    border:none;
+    box-shadow:none;
+}
+
+.green{
+    
+    color:green;
+}
+        </style>
     </head>
     <body>
         <!-- Spinner Start -->
@@ -59,9 +89,11 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="index_v1.html" class="nav-item nav-link ">Trang chủ</a>
+                            <a href="home" class="nav-item nav-link ">Trang chủ</a>
                             <a href="about.html" class="nav-item nav-link ">Thông tin đặt chỗ</a>
-                            <a href="service.html" class="nav-item nav-link">Giờ tàu-Giá vé</a>
+                            <a href="ScheduleDetailSearch.jsp" class="nav-item nav-link active">Giờ tàu-Giá vé</a>                            
+                            <a href="routeview" class="nav-item nav-link">Các tuyến đường</a>
+                            <a href="TicketVerifi.jsp" class="nav-item nav-link ">Kiểm tra vé</a>
                             <a href="package.html" class="nav-item nav-link">Quy định</a>
                             <!--                    <div class="nav-item dropdown">
                                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -77,18 +109,9 @@
                         </div>
                     </div>
                 </nav>
-                <div class=" container-fluid py-5 mb-5 " style="background-color: #353e4a;">
-                    <div class="container py-5">
+                <div class=" container-fluid py-4 mb-5 " style="background-color: #353e4a;">
+                    <div class="container py-5" style="margin-top: 3rem;">
                         <div class="train-search__data">
-                            <div class="date-picker">
-                                <div class="SingleDatePickerInput SingleDatePickerInput_1" >
-                                    <div class="DateInput DateInput_1" style="display: flex;justify-content: normal;width: auto;margin: 0 auto;">
-                                        <p>Thời gian đi <input type="date" id="datepicker"></p>
-                                        <div class="search-stations__divider"></div>
-                                        <p style="margin-left: 5px;">Thời gian về <input type="date" id="datepicker"></p>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="search-stations">
                                 <div class="station-select">
                                     <div class=" css-aakg73-container">
@@ -99,11 +122,11 @@
                                                 <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-2-placeholder" style="margin-left: 25px;">Ga đi</div>
                                                 <div class="search-station-input-wrapper">
                                                     <div class="react-select__input-container css-19bb58m" data-value="">
-                                                        <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="from_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-2-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1;  width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
+                                                        <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="from_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-2-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1;  width: 250px; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
                                                         <datalist id="stations">
-                                                            <c:forEach items="${listS}" var="o">
+                                                        <c:forEach items="${listS}" var="o">
                                                             <option value="${o}">
-                                                        </c:forEach>                                                                                                     
+                                                            </c:forEach>                                                                                                     
                                                     </datalist>
                                                 </div>
                                             </div>
@@ -127,11 +150,11 @@
                                             <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-3-placeholder" style="margin-left: 25px;">Ga đến</div>
                                             <div class="search-station-input-wrapper">
                                                 <div class="react-select__input-container css-19bb58m" data-value="">
-                                                    <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="to_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-3-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1;   width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
+                                                    <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="to_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-3-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1;   width: 250px; grid-area: 1 / 2;  min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
                                                     <datalist id="stations">
                                                         <c:forEach items="${listS}" var="o">
                                                             <option value="${o}">
-                                                        </c:forEach>                                                                                                     
+                                                            </c:forEach>                                                                                                     
                                                     </datalist>
                                                 </div>
                                             </div>
@@ -140,11 +163,123 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="date-picker">
+                            <div class="SingleDatePickerInput SingleDatePickerInput_1" >
+                                <div class="DateInput DateInput_1" style="display: flex;justify-content: normal;width: auto;margin: 0 auto;">
+                                    <p style="margin-left: 3px">Ngày <input type="date" id="datepicker" style="width:145px;outline:0px;"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trainid">
+                            <div class="SingleDatePickerInput SingleDatePickerInput_1" >
+                                <div class="DateInput DateInput_1" style="display: flex;justify-content: normal;width: 150px;margin: 0 auto;color: inherit;font: inherit;">
+                                    <p style="margin-left: 3px">Tàu <input type="text" list="trains" style="width:145px;outline:0px;">
+                                    <datalist id="stations">
+                                                        <c:forEach items="${listT}" var="tr">
+                                                            <option value="${tr}">
+                                                            </c:forEach>                                                                                                     
+                                                    </datalist>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <button class="train-search__submit-btn" type="submit" style="height:76px;">Tìm kiếm</button>
                     </div>
                 </div>
             </div>
         </div>
+            <div>
+                
+            </div>
+<!--            <div class="container mt-5 px-2">-->
+    
+<!--    <div class="mb-2 d-flex justify-content-between align-items-center">
+        
+        <div class="position-relative">
+            <span class="position-absolute search"><i class="fa fa-search"></i></span>
+            <input class="form-control w-100" placeholder="Search by order#, name...">
+        </div>
+        
+        <div class="px-2">
+            
+            <span>Filters <i class="fa fa-angle-down"></i></span>
+            <i class="fa fa-ellipsis-h ms-3"></i>
+        </div>
+        
+    </div>
+    <div class="table-responsive">
+    <table class="table table-responsive table-borderless">
+        
+      <thead>
+        <tr class="bg-light">
+          <th scope="col" width="5%"><input class="form-check-input" type="checkbox"></th>
+          <th scope="col" width="5%">#</th>
+          <th scope="col" width="20%">Date</th>
+          <th scope="col" width="10%">Status</th>
+          <th scope="col" width="20%">Customer</th>
+          <th scope="col" width="20%">Purchased</th>
+          <th scope="col" class="text-end" width="20%"><span>Revenue</span></th>
+        </tr>
+      </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><input class="form-check-input" type="checkbox"></th>
+      <td>12</td>
+      <td>1 Oct, 21</td>
+      <td><i class="fa fa-check-circle-o green"></i><span class="ms-1">Paid</span></td>
+      <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan Travis</td>
+      <td>Wirecard for figma</td>
+      <td class="text-end"><span class="fw-bolder">$0.99</span> <i class="fa fa-ellipsis-h  ms-2"></i></td>
+    </tr>
+    
+    <tr>
+      <th scope="row"><input class="form-check-input" type="checkbox"></th>
+      <td>14</td>
+      <td>12 Oct, 21</td>
+      <td><i class="fa fa-dot-circle-o text-danger"></i><span class="ms-1">Failed</span></td>
+      <td><img src="https://i.imgur.com/nmnmfGv.png" width="25"> Tomo arvis</td>
+      <td>Altroz furry</td>
+      <td class="text-end"><span class="fw-bolder">$0.19</span> <i class="fa fa-ellipsis-h  ms-2"></i></td>
+    </tr>
+    
+    
+    <tr>
+      <th scope="row"><input class="form-check-input" type="checkbox"></th>
+      <td>17</td>
+      <td>1 Nov, 21</td>
+      <td><i class="fa fa-check-circle-o green"></i><span class="ms-1">Paid</span></td>
+      <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan Travis</td>
+      <td>Apple Macbook air</td>
+      <td class="text-end"><span class="fw-bolder">$1.99</span> <i class="fa fa-ellipsis-h  ms-2"></i></td>
+    </tr>
+    
+    
+    <tr>
+      <th scope="row"><input class="form-check-input" type="checkbox"></th>
+      <td>90</td>
+      <td>19 Oct, 21</td>
+      <td><i class="fa fa-check-circle-o green"></i><span class="ms-1">Paid</span></td>
+      <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Travis head</td>
+      <td>Apple Macbook Pro</td>
+      <td class="text-end"><span class="fw-bolder">$9.99</span> <i class="fa fa-ellipsis-h  ms-2"></i></td>
+    </tr>
+    
+    
+    <tr>
+      <th scope="row"><input class="form-check-input" type="checkbox"></th>
+      <td>12</td>
+      <td>1 Oct, 21</td>
+      <td><i class="fa fa-check-circle-o green"></i><span class="ms-1">Paid</span></td>
+      <td><img src="https://i.imgur.com/nmnmfGv.png" width="25"> Althan Travis</td>
+      <td>Wirecard for figma</td>
+      <td class="text-end"><span class="fw-bolder">$0.99</span> <i class="fa fa-ellipsis-h  ms-2"></i></td>
+    </tr>
+  </tbody>
+</table>
+  
+  </div>-->
+    
+</div>
 
         <!-- Nav end -->
 
