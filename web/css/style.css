@@ -1,4 +1,8 @@
 /*Some change*/
+div#departure-station-error { position: relative; }
+div.close {
+  
+}
 .train-search-form-block .block__title {
     align-self: end;
     color: #fff;

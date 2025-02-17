@@ -5,12 +5,18 @@
         <group>
             <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/Home.jsp</file>
             <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/RoutesViewServlet.java</file>
-            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/HomeServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/Login.jsp</file>
             <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/Header.jsp</file>
             <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/dal/DAO.java</file>
             <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/css/style.css</file>
-            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/index_v2.html</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/StaffHome.jsp</file>
             <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/RoutesTable.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/HomeServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/LoginServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/TicketVerifi.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/index_v2.html</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/dal/DBContext.java</file>
         </group>
     </open-files>
 </project-private>

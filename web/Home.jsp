@@ -95,8 +95,9 @@
                                             <div class="sticky-outer-wrapper train-search__sticky-wrapper">
                                                 <div class="sticky-inner-wrapper inner-wrapper" style="position: relative; top: 0px;">
                                                     <div class="train-search">
-                                                        <div>
-                                                            <form action="search_train" method="post">
+                                                        <form action="search_train" method="post" id="ticket-form">
+                                                            <div>
+
                                                                 <div class="trip-switch">
                                                                     <label class="radio-button">
                                                                         <input type="radio" class="radio-input" name="options" readonly="" tabindex="0" value="oneWay" id="oneWay" checked="">
@@ -170,6 +171,7 @@
                                                                     </div>
                                                                     <button class="train-search__submit-btn" type="submit">Tìm kiếm</button>
                                                                 </div>
+
                                                             </div>
                                                             <div id="roundTrip-content" class="content" style="display:none;">
                                                                 <div class="train-search__data">
@@ -234,9 +236,37 @@
                                                                     </div>
                                                                     <button class="train-search__submit-btn" type="submit" style="height:76px;">Tìm kiếm</button>
                                                                 </div>
+                                                                
                                                             </div>
-                                                        </form>
-                                                    </div>
+
+                                                        </div>
+                                                            <div id="error-container" style="position: relative;text-align: center;
+                                                                     ">
+                                                                    <div id="error1" class="error-message" style="display:none;padding: 10px; margin: 10px;  color: #333;  background: #fafafa;  border: 1px solid #ccc;color: #ba3939; background: #ffe0e0;  border: 1px solid #a33a3a;position: absolute;
+
+                                                                         background-color: rgba(255, 0, 0, 0.8);
+                                                                         color: white;
+                                                                         padding: 10px;
+                                                                         border-radius: 5px;
+                                                                         width: 500px;
+                                                                         left: 225px;
+                                                                         transition: top 0.3s ease-in-out;"></div>
+                                                                    <div id="error2" class="error-message" style=" display:none;padding: 10px; margin: 10px;  color: #333;  background: #fafafa;  border: 1px solid #ccc;color: #ba3939; background: #ffe0e0;  border: 1px solid #a33a3a; position: absolute;background-color: rgba(255, 0, 0, 0.8);
+                                                                         color: white;
+                                                                         padding: 10px;
+                                                                         border-radius: 5px;
+                                                                         width: 500px;
+                                                                         left: 225px;
+                                                                         transition: top 0.3s ease-in-out;"> </div>
+                                                                    <div id="error3" class="error-message" style="display:none;padding: 10px; margin: 10px;  color: #333;  background: #fafafa;  border: 1px solid #ccc;color: #ba3939; background: #ffe0e0;  border: 1px solid #a33a3a; position: absolute;background-color: rgba(255, 0, 0, 0.8);
+                                                                         color: white;
+                                                                         padding: 10px;
+                                                                         border-radius: 5px;
+                                                                         width: 500px;
+                                                                         left: 225px;
+                                                                         transition: top 0.3s ease-in-out;" ></div>
+                                                                </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -256,35 +286,129 @@
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
         <jsp:include page="Footer.jsp"></jsp:include>
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/wow/wow.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="lib/tempusdominus/js/moment.min.js"></script>
-        <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-        <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+            <!-- JavaScript Libraries -->
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="lib/wow/wow.min.js"></script>
+            <script src="lib/easing/easing.min.js"></script>
+            <script src="lib/waypoints/waypoints.min.js"></script>
+            <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+            <script src="lib/tempusdominus/js/moment.min.js"></script>
+            <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+            <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
-        <!-- Template Javascript -->
-        <script src="js/main.js"></script>
+            <!-- Template Javascript -->
+            <script src="js/main.js"></script>
 
-        <!-- Swap data Javascript -->
-        <script>
+            <!-- Swap data Javascript -->
+            <script>
                                                                                 function swapData() {
                                                                                     // Lấy giá trị từ các input
                                                                                     var gaDi = document.getElementById("from_station").value;
                                                                                     var gaDen = document.getElementById("to_station").value;
-
                                                                                     // Đổi giá trị giữa hai input
                                                                                     document.getElementById("from_station").value = gaDen;
                                                                                     document.getElementById("to_station").value = gaDi;
                                                                                 }
 
 
+            </script>
+            <script>
+                document.getElementById('ticket-form').addEventListener('submit', function (event) {
+                    let isValid = true;
+
+                    // Lấy giá trị các trường
+                    const departureDate = new Date(document.getElementById('input_from').value);
+                    const returnDate = new Date(document.getElementById('input_to').value);
+                    const departureStation = document.getElementById('from_station').value.trim();
+                    const arrivalStation = document.getElementById('to_station').value.trim();
+                    const validStations = Array.from(document.querySelectorAll('#stations option')).map(option => option.value);
+
+                    // Kiểm tra xem ngày đi và ngày về có hợp lệ không
+                    if (isNaN(departureDate.getTime()) || isNaN(returnDate.getTime())) {
+                        document.getElementById('error1').innerHTML = `
+            <div class="close" onclick="removeError('error1')" style="position: absolute; top: 30%; right: 10px; color: #888; cursor: pointer;">X</div>
+            <i class="ico" style="display: inline-block; width: 20px; text-align: center; font-style: normal; font-weight: bold;">&#9747;</i>
+            Ngày đi hoặc ngày về không hợp lệ.
+        `;
+                        document.getElementById('error1').style.display = 'inline';
+                        isValid = false;
+                    } else {
+                        // Kiểm tra ngày về phải lớn hơn ngày đi
+                        if (returnDate <= departureDate) {
+                            document.getElementById('error1').innerHTML = `
+                <div class="close" onclick="removeError('error1')" style="position: absolute; top: 30%; right: 10px; color: #888; cursor: pointer;">X</div>
+                <i class="ico" style="display: inline-block; width: 20px; text-align: center; font-style: normal; font-weight: bold;">&#9747;</i>
+                Ngày về phải lớn hơn ngày đi.
+            `;
+                            document.getElementById('error1').style.display = 'inline';
+                            isValid = false;
+                        } else {
+                            document.getElementById('error1').style.display = 'none';
+                        }
+                    }
+
+                    // Kiểm tra tên ga đi và ga đến phải trùng với danh sách ga
+                    if (!validStations.includes(departureStation)) {
+                        document.getElementById('error2').innerHTML = `
+            <div class="close" onclick="removeError('error2')" style="position: absolute; top: 30%; right: 10px; color: #888; cursor: pointer;">X</div>
+            <i class="ico" style="display: inline-block; width: 20px; text-align: center; font-style: normal; font-weight: bold;">&#9747;</i>
+            Ga đi không hợp lệ.
+        `;
+                        document.getElementById('error2').style.display = 'inline';
+                        isValid = false;
+                    } else {
+                        document.getElementById('error2').style.display = 'none';
+                    }
+
+                    if (!validStations.includes(arrivalStation)) {
+                        document.getElementById('error3').innerHTML = `
+            <div class="close" onclick="removeError('error3')" style="position: absolute; top: 30%; right: 10px; color: #888; cursor: pointer;">X</div>
+            <i class="ico" style="display: inline-block; width: 20px; text-align: center; font-style: normal; font-weight: bold;">&#9747;</i>
+            Ga đến không hợp lệ.
+        `;
+                        document.getElementById('error3').style.display = 'inline';
+                        isValid = false;
+                    } else {
+                        document.getElementById('error3').style.display = 'none';
+                    }
+
+                    // Nếu có lỗi, ngừng gửi form
+                    if (!isValid) {
+                        event.preventDefault();
+
+                        // Lặp qua các lỗi và di chuyển chúng
+                        let errorCount = 0;
+                        for (let i = 1; i <= 3; i++) {
+                            const errorElement = document.getElementById(`error${i}`);
+                            if (errorElement.style.display === 'inline') {
+                                errorCount++;
+                                errorElement.style.top = `${40 * (errorCount - 1)}px`; // Đẩy các lỗi lên theo thứ tự
+                            }
+                        }
+                    }
+                });
+
+// Hàm xóa lỗi và điều chỉnh các lỗi còn lại
+                function removeError(errorId) {
+                    const errorElement = document.getElementById(errorId);
+                    errorElement.style.display = 'none';
+
+                    // Cập nhật lại vị trí các lỗi còn lại
+                    let errorCount = 0;
+                    for (let i = 1; i <= 3; i++) {
+                        const errorElement = document.getElementById(`error${i}`);
+                        if (errorElement.style.display === 'inline') {
+                            errorCount++;
+                            errorElement.style.top = `${40 * (errorCount - 1)}px`;
+                        }
+                    }
+                }
+
         </script>
-    </script>
-</body>
+
+
+
+    </body>
 
 </html>
