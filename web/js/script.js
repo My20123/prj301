@@ -137,30 +137,6 @@
       },
     });
 
-    var swiper = new Swiper("#featured-products .product-swiper-two", {
-      pagination: {
-        el: "#featured-products .swiper-pagination",
-        clickable: true,
-      },
-      breakpoints: {
-        0: {
-          slidesPerView: 1,
-          spaceBetween: 30,
-        },
-        768: {
-          slidesPerView: 2,
-          spaceBetween: 30,
-        },
-        999: {
-          slidesPerView: 4,
-          spaceBetween: 30,
-        },
-        1299: {
-          slidesPerView: 5,
-          spaceBetween: 30,
-        },
-      },
-    });
 
     var swiper = new Swiper("#flash-sales .product-swiper", {
       pagination: {
