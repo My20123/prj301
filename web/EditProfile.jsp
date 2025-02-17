@@ -89,7 +89,7 @@
         <div class="sidebar">
             <img src="img/DefaultAvt.png" id="display" alt="Avatar" accept=".png">
             <input type="file" id="file" hidden="">
-            <input  type="file">Change avatar</label>
+            <btn"file">Change avatar</label>
         </div>
         <div class="content">
             <form action="editprofile" method="post">
