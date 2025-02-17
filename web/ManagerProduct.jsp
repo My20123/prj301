@@ -68,7 +68,7 @@
                                 <td>${o.id}</td>
                                 <td>${o.name}</td>
                                 <td>
-                                    <img src="${o.image}">
+                                    <img src="${o.image}" alt="Image">
                                 </td>
                                 <td>${o.price} $</td>
                                 <td>
