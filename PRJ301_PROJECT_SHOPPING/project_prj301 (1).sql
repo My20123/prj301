@@ -121,12 +121,3 @@ VALUES
     (N'Giày Sneaker Unisex Puma Spirex Speed Mist - Xám', 'https://supersports.com.vn/cdn/shop/files/39726302-1.jpg?v=1702289868&width=1000', 2579400, N'GIÀY SNEAKER UNISEX PUMA SPIREX SPEED MIST', N'Được lấy cảm hứng từ những biểu tượng tốc độ của PUMA, đây là sự tiếp nối của phong cách retro mang đến hơi thở mới mẻ. Hãy sở hữu ngay Giày Sneaker Unisex Puma Spirex Speed Mist để thêm nét cá tính táo bạo cho phong cách thời trang của bạn!',3,6)
     
   ;
-GO
-UPDATE Products
-SET 
-      description = N'Được Womens Health trao giải thưởng đôi giày chạy bộ tốt nhất cho mọi cấp độ, Giày Chạy Bộ Nữ Adidas Supernova Rise luôn thoải mái trên mọi dặm đường. Với công nghệ Dreamstrike+, đế giữa sở hữu ​mút foam cải tiến siêu mềm mại. Hệ thống foam Support Rods truyền lực mượt mà tuyệt đối, từ gót chân đến mũi chân. Độ ôm gót chân chắc chắn nhờ vào thiết kế gót giày đặc biệt và vải dệt mềm mại.'      
-WHERE name =N'Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương' ;
-
-SELECT product_id, name, price, stock_quantity 
-FROM Products
-WHERE name = N'Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương';
