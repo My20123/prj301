@@ -122,3 +122,11 @@ VALUES
     
   ;
 GO
+UPDATE Products
+SET 
+      description = N'Được Womens Health trao giải thưởng đôi giày chạy bộ tốt nhất cho mọi cấp độ, Giày Chạy Bộ Nữ Adidas Supernova Rise luôn thoải mái trên mọi dặm đường. Với công nghệ Dreamstrike+, đế giữa sở hữu ​mút foam cải tiến siêu mềm mại. Hệ thống foam Support Rods truyền lực mượt mà tuyệt đối, từ gót chân đến mũi chân. Độ ôm gót chân chắc chắn nhờ vào thiết kế gót giày đặc biệt và vải dệt mềm mại.'      
+WHERE name =N'Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương' ;
+
+SELECT product_id, name, price, stock_quantity 
+FROM Products
+WHERE name = N'Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương';
