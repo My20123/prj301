@@ -8,7 +8,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
-<html>
+ <!-- befor <html> -->
+    <!-- after fix -->
+    <html lang="en" xml:lang="en">
+    <!-- -->
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
@@ -59,16 +62,28 @@
                     <div class="container">
                         <div class="card">
                             <div class="row">
-                                <aside class="col-sm-5 border-right">
+                                <!-- Befor <aside class="col-sm-5 border-right">-->
+                                        <!-- after fix -->
+                                        <aside class="col-sm-5 border-right" aria-label="Thông tin bên lề">
+                                             <!-- -->
                                     <article class="gallery-wrap"> 
                                         <div class="img-big-wrap">
-                                            <div> <a href="#"><img src="${detail.image}"></a></div>
+                                            <!-- Befor <div> <a href="#"><img src="{detail.image}"></a></div> -->
+                                                    <!-- after -->
+                                                    <div> 
+                                                        <a href="#"><img src="${detail.image}" alt="Product Image">
+                                                    </a>
+                                                </div> 
+                                                    <!-- -->
                                         </div> <!-- slider-product.// -->
                                         <div class="img-small-wrap">
                                         </div> <!-- slider-nav.// -->
                                     </article> <!-- gallery-wrap .end// -->
                                 </aside>
-                                <aside class="col-sm-7">
+                                <!--Befor <aside class="col-sm-7"> -->
+                                    <!-- After fix  -->
+                                    <aside class="col-sm-7" aria-label="Thông tin bổ sung">
+                                    <!-- -->
                                     <article class="card-body p-5">
                                         <h3 class="title mb-3">${detail.name}</h3>
 
