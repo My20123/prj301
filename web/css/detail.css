@@ -120,7 +120,7 @@
     text-align: center;
     line-height: 2em; }
 .not-available:before {
-    font-family: fontawesome;
+    font-family: fontawesome, sans-serif; 
     content: "\f00d";
     color: #fff; }
 

@@ -65,12 +65,16 @@ GO
 --INSERT DATA AND FOREIGN KEYS CONSTRAINTS
 USE PRJ_SportsShopping;
 -- Insert into the Accounts table
-INSERT INTO Accounts ( [user], [pass], [isSell], [isAdmin]) VALUES ( N'Adam', N'123456', 1, 0),
-( N'Tuan', N'123456', 1, 0),
-( N'Kien', N'123456', 0, 1),
-( N'Tung', N'123456', 1, 1),
-(N'My', N'123456', 0, 0),
-( N'Huyen', N'123456', 1, 0);
+DECLARE @DefaultPassword NVARCHAR(50) = N'123456';
+
+INSERT INTO Accounts ([user], [pass], [isSell], [isAdmin])
+VALUES
+    (N'Adam', @DefaultPassword, 1, 0),
+    (N'Tuan', @DefaultPassword, 1, 0),
+    (N'Kien', @DefaultPassword, 0, 1),
+    (N'Tung', @DefaultPassword, 1, 1),
+    (N'My', @DefaultPassword, 0, 0),
+    (N'Huyen', @DefaultPassword, 1, 0);
 GO
 
 -- Insert categories into the Categories table
