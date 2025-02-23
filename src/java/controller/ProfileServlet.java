@@ -62,6 +62,7 @@ public class ProfileServlet extends HttpServlet {
             int id = Integer.parseInt(uid);
             DAO d = new DAO();
             Accounts u = d.GetUserById(id);
+            request.setAttribute("user", u);
             request.getRequestDispatcher("User.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             System.out.println(e);

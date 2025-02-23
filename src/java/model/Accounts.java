@@ -21,11 +21,12 @@ public class Accounts {
     private String uphone;    
     private int isStaff;
     private int isAdmin;
+    private String cccd;
 
     public Accounts() {
     }
 
-    public Accounts(int id, String uname, String umail, String pass, String uphone, int isStaff, int isAdmin) {
+    public Accounts(int id, String uname, String umail, String pass, String uphone, int isStaff, int isAdmin, String cccd) {
         this.id = id;
         this.uname = uname;
         this.umail = umail;
@@ -33,6 +34,7 @@ public class Accounts {
         this.uphone = uphone;
         this.isStaff = isStaff;
         this.isAdmin = isAdmin;
+        this.cccd = cccd;
     }
 
     public int getId() {
@@ -90,5 +92,14 @@ public class Accounts {
     public void setIsAdmin(int isAdmin) {
         this.isAdmin = isAdmin;
     }
-    
+
+    public String getCccd() {
+        return cccd;
+    }
+
+    public void setCccd(String cccd) {
+        this.cccd = cccd;
+    }
+
+
 }

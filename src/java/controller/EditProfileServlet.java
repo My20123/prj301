@@ -21,6 +21,7 @@ public class EditProfileServlet extends HttpServlet {
             int id = Integer.parseInt(id_raw);
             DAO d = new DAO();
             Accounts u = d.GetUserById(id);
+            request.setAttribute("users", u);
             request.getRequestDispatcher("EditProfile.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             System.out.println(e);
@@ -30,14 +31,17 @@ public class EditProfileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        String uname = request.getParameter("uname");
-        String uphone = request.getParameter("uphone");
-        String umail = request.getParameter("umail");
-        String role = request.getParameter("role");
-
+        int uId = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("uname");
+        String phone = request.getParameter("uphone");
+        String email = request.getParameter("umail");
+        String cccd = request.getParameter("cccd");
         DAO d = new DAO();
-        d.updateUser(id, uname, uphone, umail, role);
+        d.updateUser(uId, name, phone, email, cccd);
+
+        HttpSession session = request.getSession();
+        Accounts updatedUser = d.GetUserById(uId);
+        session.setAttribute("acc", updatedUser);
 
         response.sendRedirect("User.jsp");
     }

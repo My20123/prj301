@@ -44,13 +44,51 @@ public class DAO {
                         rs.getString(4),
                         rs.getString(5),
                         rs.getInt(6),
-                        rs.getInt(7)));
+                        rs.getInt(7),
+                        rs.getString(8)));
             }
         } catch (Exception e) {
         }
         return list;
     }
+     public Accounts GetUserById(int id) {
+        try {
+            String query = "SELECT * FROM Accounts WHERE uID = ?";
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(query);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return new Accounts(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getInt(6),
+                        rs.getInt(7),
+                        rs.getString(8));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    public void updateUser(int id, String uname, String uphone, String umail, String cccd) {
+        String query = "UPDATE Accounts SET uname = ?, uphone = ?, umail = ?, cccd = ? WHERE uID = ?";
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(query);
+            ps.setString(1, uname);
+            ps.setString(2, uphone);
+            ps.setString(3, umail);
+            ps.setString(4, cccd);
+            ps.setInt(5, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public List getAllStations() {
         List<String> list = new ArrayList<>();
         try {
@@ -111,7 +149,6 @@ public class DAO {
     }
 
     public Accounts login(String user, String pass) {
-
         try {
             String query = "select * from accounts where uname = ? and pass =?";
             con = new DBContext().getConnection();//mo ket noi voi sql
@@ -126,49 +163,13 @@ public class DAO {
                         rs.getString(4),
                         rs.getString(5),
                         rs.getInt(6),
-                        rs.getInt(7));
+                        rs.getInt(7),
+                        rs.getString(8));
             }
         } catch (Exception e) {
 
         }
         return null;
-    }
-    public Accounts GetUserById(int id) {
-        try {
-            String query = "SELECT * FROM Accounts WHERE uID = ?";
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return new Accounts(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getInt(6),
-                        rs.getInt(7));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void updateUser(int id, String uname, String uphone, String umail, String role) {
-        String query = "UPDATE Accounts SET uname = ?, uphone = ?, umail = ?, role = ? WHERE id = ?";
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setString(1, uname);
-            ps.setString(2, uphone);
-            ps.setString(3, umail);
-            ps.setString(4, role);
-            ps.setInt(5, id);
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public List searchRoute(String depart, String desti) {
@@ -218,7 +219,8 @@ public class DAO {
                         rs.getString(4),
                         rs.getString(5),
                         rs.getInt(6),
-                        rs.getInt(7));
+                        rs.getInt(7),
+                        rs.getString(8));
             }
         } catch (Exception e) {
 

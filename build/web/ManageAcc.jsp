@@ -28,7 +28,7 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h2>Manage <b>Account</b></h2>
+                            <h2>Manage Account</h2>
                         </div>
                         <div class="col-sm-6">
                             <a href="home"  class="btn btn-success"> <span>Home</span></a>
@@ -43,6 +43,7 @@
                             <th>Email</th>
                             <th>Role</th>
                             <th>Phone</th>
+                            <th>CCCD</th>
                             <th>Image</th>
                         </tr>
                     </thead>
@@ -53,6 +54,7 @@
                                 <td>${u.uname}</td>
                                 <td>${u.umail}</td>
                                 <td>${u.role}</td>
+                                <th>CCCD</th>
                                 <td>${u.uphone}</td>
                                 <td>
                                     <img src="img/DefaultAvt.png">
