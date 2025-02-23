@@ -1,6 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="user" value="${sessionScope.acc}" />
 <!DOCTYPE html>
 <html>
     <head>
@@ -27,7 +26,6 @@
         <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
         <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
-
         <!-- Customized Bootstrap Stylesheet -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -51,8 +49,9 @@
                     <!-- left column -->
                     <div class="col-md-3">
                         <div class="text-center">
-                            <img src="img/DefaultAvt.png" class="avatar img-circle" alt="avatar" >
-                            
+                            <img src="img/DefaultAvt.png" id="preview" class="avatar img-circle" alt="avatar">
+                            <h6>Upload a different photo...</h6>
+                            <input type="file" id="display" class="form-control" accept="image/*">
                         </div>
                     </div>
                     <!-- edit form column -->
@@ -61,50 +60,47 @@
                             <a class="panel-close close" data-dismiss="alert"></a>
                             <i class="fa fa-coffee"></i> Update your profile information </div>
                         <h3>Personal info</h3>
-                        <form class="form-horizontal" role="form">
+                        <form class="form-horizontal" action="editprofile" method="post">
                             <div class="form-group">
                                 <label class="col-lg-3 control-label">ID:</label>
                                 <div class="col-lg-8">
-                                    <input class="form-control" type="text" value="${user.id}" readonly="">
+                                    <input class="form-control" type="text" name="id" value="${requestScope.users.id}" readonly="">
                             </div>
-                        </div>
+                        </div>                      
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Phone number:</label>
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" value="${user.uphone}" readonly="">
+                                <input class="form-control" type="text" name="uphone" value="${requestScope.users.uphone}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Email:</label>
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" value="${user.umail}" readonly="">
+                                <input class="form-control" type="text" name="umail" value="${requestScope.users.umail}">
                             </div>
                         </div>                            
                         <div class="form-group">
                             <label class="col-md-3 control-label">Username:</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="${user.uname}" readonly="">
+                                <input class="form-control" type="text" name="uname" value="${requestScope.users.uname}" >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label">Role:</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="${user.isStaff == 1 ? "Staff" : (user.isAdmin == 1 ? "Admin" : "User")}" readonly="">
+                                <input class="form-control" type="text" value="${requestScope.users.isStaff == 1 ? "Staff" : (requestScope.users.isAdmin == 1 ? "Admin" : "User")}" readonly="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label">CCCD:</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="text" value="${user.cccd}" readonly="">
+                                <input class="form-control" type="text" name="cccd" value="${requestScope.users.cccd}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label"></label>
                             <div class="col-md-8">
-                                <a href="editprofile?id=${user.id}" class="btn btn-primary">Edit</a>
-                                <!--                                    <input type="button" class="btn btn-primary" value="Edit">
-                                                                    <span></span>
-                                                                    <input type="reset" class="btn btn-default" value="Cancel">-->
+                                <input type="submit" class="btn btn-primary" value="Save changes">
                             </div>
                         </div>
                     </form>
@@ -127,5 +123,6 @@
 
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
+        <script src="js/avt.js"></script>
     </body>
 </html>
