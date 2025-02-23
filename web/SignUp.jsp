@@ -13,29 +13,32 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <link href="css/login.css" rel="stylesheet" type="text/css"/>
-        <title>Login Form</title>
+        <title>SignUp Form</title>
     </head>
     <body>
         <div id="logreg-forms">
-            <form class="form-signin" action="login" method="post">
-                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
-                <p class ="text-danger">${mess}</p>
-                <input name="user"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
+            <form class="form-signin" action="signup" method="post">
+                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign up</h1>
+
+                <p class="text-danger">${mess}</p>
+
+                <input name="user" type="text" id="user-name" class="form-control" placeholder="User name" required="" autofocus="">
                 <br>
-                <input name="pass"  type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+                <input name="email" type="text" id="user-email" class="form-control" placeholder="User email" required="" autofocus="">
+                <br>
+                <input name="phone" type="text" id="user-phone" class="form-control" placeholder="User phone" required="" autofocus="">
+                <br>
+                <input name="pass" type="password" id="user-pass" class="form-control" placeholder="Password" required autofocus="">
+                <br>
+                <input name="repass" type="password" id="user-repeatpass" class="form-control" placeholder="Repeat Password" required autofocus="">
 
-                <div class="form-group form-check">
-                    <input name="remember" value="1" type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Remember me</label>
-                </div>
+                <br>
 
-                <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+
+                <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Sign up </button>
                 <hr>
-
             </form>
 
-
-            <br>
 
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

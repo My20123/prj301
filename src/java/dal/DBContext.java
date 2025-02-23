@@ -22,7 +22,11 @@ public class DBContext {
     private final String dbName = "prj_train";
     private final String portNumber = "3306";
     private final String user = "root";
+<<<<<<< HEAD
     private final String password = "khanh123";
+=======
+    private final String password = "1234";
+>>>>>>> f8b9629 (login, register, logout)
     public static void main(String[] args) {
         try {
             System.out.println(new DBContext().getConnection());

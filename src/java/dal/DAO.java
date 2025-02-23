@@ -228,13 +228,15 @@ public class DAO {
         return null;
     }
 
-    public void singup(String user, String pass) {
-        String query = "insert into accounts values(?,0,?,0,0,0)";
+    public void singup(String user,String email, String pass,String phone) {
+        String query = "INSERT INTO Accounts ( uname, umail, pass, uphone , isStaff, isAdmin) VALUES ( ?,?,?,?, 0,0)";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
             ps.setString(1, user);
-            ps.setString(2, pass);
+            ps.setString(2,email );
+            ps.setString(3, pass);
+            ps.setString(4, phone);
             ps.executeUpdate();
         } catch (Exception e) {
 
