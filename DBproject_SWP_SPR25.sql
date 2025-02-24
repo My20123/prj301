@@ -1,6 +1,7 @@
 USE prj_train;
 
 
+
 -- Create the Accounts table
 CREATE TABLE Accounts (
 	uID int   AUTO_INCREMENT PRIMARY KEY,
@@ -34,8 +35,6 @@ CREATE TABLE Routes_data (
     value int,
     FOREIGN KEY (id) REFERENCES Routes(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
 
 -- Create the Train table with foreign key to Route table
 CREATE TABLE Trains(
