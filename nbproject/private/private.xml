@@ -2,18 +2,22 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
-        <group/>
-=======
         <group>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/web/Header.jsp</file>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/src/java/controller/SignupServlet.java</file>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/src/java/controller/LogoutServlet.java</file>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/src/java/dal/DAO.java</file>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/web/SignUp.jsp</file>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/src/java/controller/LoginServlet.java</file>
-            <file>file:/D:/BanVeTau_SWP391_SP25-main/web/Login.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/SearchResult.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/Payment.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/BookingServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/Home.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/dal/DAO.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/Order.jsp</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/SearchTrainServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/DTO/PaymentResDTO.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/PaymentController.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/LoginServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/model/Order_Details.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/controller/HomeServlet.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/Config/Config.java</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/tra%20my/OneDrive/Máy%20tính/prjBanVeTau_SWP391_SE1874_SP25/src/java/dal/DBContext.java</file>
         </group>
->>>>>>> f8b9629 (login, register, logout)
     </open-files>
 </project-private>
