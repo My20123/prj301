@@ -60,6 +60,7 @@
                             <a href="404.html" class="dropdown-item">404 Page</a>
                         </div>
                     </div>
+                            
                 </c:if>
 
                 <c:if test="${sessionScope.acc != null }"> 
@@ -86,7 +87,6 @@
                      <a href="SignUp.jsp" class="btn btn-primary rounded-pill  me-2">Đăng ký</a>
 
                 </c:if>
-
             </div>
         </div>
     </div>
