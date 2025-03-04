@@ -32,7 +32,7 @@ public class DAO {
 
     public List<Accounts> getAllAccounts() {
         List<Accounts> list = new ArrayList<>();
-        String query = "select * from Accounts";
+        String query = "select * from accounts";
         try {
             con = new DBContext().getConnection();//mo ket noi voi sql
             ps = con.prepareStatement(query);
@@ -53,7 +53,7 @@ public class DAO {
     }
      public Accounts GetUserById(int id) {
         try {
-            String query = "SELECT * FROM Accounts WHERE uID = ?";
+            String query = "SELECT * FROM accounts WHERE uid = ?";
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
@@ -75,7 +75,7 @@ public class DAO {
     }
 
     public void updateUser(int id, String uname, String uphone, String umail, String cccd) {
-        String query = "UPDATE Accounts SET uname = ?, uphone = ?, umail = ?, cccd = ? WHERE uID = ?";
+        String query = "UPDATE accounts SET uname = ?, uphone = ?, umail = ?, cccd = ? WHERE uid = ?";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
@@ -92,7 +92,7 @@ public class DAO {
     public List getAllStations() {
         List<String> list = new ArrayList<>();
         try {
-            String query = "SELECT DISTINCT route_key FROM Routes_data;";
+            String query = "SELECT DISTINCT route_key FROM routes_data;";
             con = new DBContext().getConnection();//mo ket noi voi sql
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
@@ -109,13 +109,13 @@ public class DAO {
         List<Integer> listid = new ArrayList<>();
 
         try {
-            String query = "SELECT * FROM Routes";
+            String query = "SELECT * FROM routes";
             con = new DBContext().getConnection();//mo ket noi voi sql
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String query1 = "select * from Routes_data where id=?";
+                String query1 = "select * from routes_data where id=?";
                 PreparedStatement ps1 = con.prepareStatement(query1);
                 ps1.setInt(1, id);
                 ResultSet rs1 = ps1.executeQuery();
@@ -136,7 +136,7 @@ public class DAO {
     public List getAllTrains() {
         List<String> list = new ArrayList<>();
         try {
-            String query = "SELECT id FROM Trains;";
+            String query = "SELECT id FROM trains;";
             con = new DBContext().getConnection();//mo ket noi voi sql
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
@@ -175,7 +175,7 @@ public class DAO {
     public List searchRoute(String depart, String desti) {
         List<Routes> list = new ArrayList<>();
         try {
-            String query = "select id,from_station, to_station  from Routes where id in(SELECT rd1.id FROM Routes_data rd1 JOIN Routes_data rd2 ON rd1.id = rd2.id WHERE rd1.route_key = ?  AND rd1.value < rd2.value AND rd2.route_key = ?)";
+            String query = "select id,from_station, to_station  from routes where id in(SELECT rd1.id FROM routes_data rd1 JOIN routes_data rd2 ON rd1.id = rd2.id WHERE rd1.route_key = ?  AND rd1.value < rd2.value AND rd2.route_key = ?)";
             con = new DBContext().getConnection();//mo ket noi voi sql
             ps = con.prepareStatement(query);
             ps.setString(1, depart);
@@ -187,7 +187,7 @@ public class DAO {
                 String from_station = rs.getString(2);
                 String to_station = rs.getString(3);
                 LinkedHashMap<String, Integer> thr_station = new LinkedHashMap<>();
-                String query1 = "select route_key, value from Routes_data where id=?";
+                String query1 = "select route_key, value from routes_data where id=?";
                 PreparedStatement ps1 = con.prepareStatement(query1);
                 ps.setInt(1, rid);
                 ResultSet rs1 = ps1.executeQuery();
@@ -205,7 +205,7 @@ public class DAO {
     
 
     public Accounts checkAccountExist(String user) {
-        String query = "select * from accounts where [uname] = ?";
+        String query = "select * from accounts where uname = ?";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
@@ -229,7 +229,7 @@ public class DAO {
     }
 
     public void singup(String user,String email, String pass,String phone) {
-        String query = "INSERT INTO Accounts ( uname, umail, pass, uphone , isStaff, isAdmin) VALUES ( ?,?,?,?, 0,0)";
+        String query = "INSERT INTO accounts ( uname, umail, pass, uphone , isStaff, isAdmin) VALUES ( ?,?,?,?, 0,0)";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
@@ -245,7 +245,7 @@ public class DAO {
 public String searchTrainsWithRid(int rid){
     String trids= "";
     try {
-        String query = "SELECT trid FROM Schedules where rid = ?;";
+        String query = "SELECT trid FROM schedules where rid = ?;";
             con = new DBContext().getConnection();//mo ket noi voi sql
             ps = con.prepareStatement(query);
             ps.setInt(1, rid);
@@ -262,55 +262,162 @@ public String searchTrainsWithRid(int rid){
     return trids;
 }
 
-    public List searchSchedules(List<Routes> routes, Date date) throws Exception {
-        List<Schedules> schedulesList = new ArrayList<>();
-        String query = "SELECT id, rid, trid, from_time FROM Schedules WHERE DATE(from_time) = ? AND rid = ?";
-        for (Routes route : routes) {
-            int routeId = route.getId();
-            try (Connection con = new DBContext().getConnection(); PreparedStatement stmt = con.prepareStatement(query)) {
-
-                // Set parameters
-                stmt.setDate(1, new java.sql.Date(date.getTime()));  // Convert java.util.Date to java.sql.Date
-                stmt.setInt(2, routeId);
-
-                // Execute query
-                ResultSet rs = stmt.executeQuery();
-
-                // Process the result set
-                while (rs.next()) {
-                    int id = rs.getInt("id");
-                    int rid = rs.getInt("rid");
-                    String trid = rs.getString("trid");
-                    Date fromTime = rs.getTimestamp("from_time");
-
-                    // Add the result to the list
-                    schedulesList.add(new Schedules(id, rid, trid, fromTime));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    public List<Schedule> searchSchedules(String fromStation, String toStation, Date date) {
+        List<Schedule> list = new ArrayList<>();
+        String sql = "SELECT s.id, s.rid, s.trid, t.train_type, r.from_station, r.to_station, s.from_time, s.to_time " +
+                    "FROM schedules s " +
+                    "INNER JOIN routes r ON s.rid = r.id " +
+                    "INNER JOIN trains t ON s.trid = t.id " +
+                    "WHERE r.from_station = ? AND r.to_station = ? " +
+                    "AND DATE(s.from_time) = DATE(?)";
+        
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, fromStation);
+            ps.setString(2, toStation);
+            ps.setDate(3, new java.sql.Date(date.getTime()));
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                Schedule schedule = new Schedule(
+                    rs.getInt("id"),
+                    rs.getInt("rid"),
+                    rs.getString("trid"),
+                    rs.getString("train_type"),
+                    rs.getString("from_station"),
+                    rs.getString("to_station"),
+                    rs.getTimestamp("from_time"),
+                    rs.getTimestamp("to_time")
+                );
+                list.add(schedule);
+            }           
+        } catch (Exception e) {
+            System.out.println("Error in searchSchedules: " + e.getMessage());
+            e.printStackTrace();
         }
+        return list;
+    }
 
-        return schedulesList;
+    public List<Schedule> getAllSchedules() {
+        List<Schedule> list = new ArrayList<>();
+        String sql = "SELECT s.id, s.rid, s.trid, t.train_type, r.from_station, r.to_station, s.from_time, s.to_time " +
+                    "FROM schedules s " +
+                    "INNER JOIN routes r ON s.rid = r.id " +
+                    "INNER JOIN trains t ON s.trid = t.id";
+        try {
+            con = new DBContext().getConnection();
+            PreparedStatement st = con.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();  
+            while (rs.next()) {
+                Schedule s = new Schedule();
+                s.setId(rs.getInt("id"));
+                s.setRid(rs.getInt("rid"));
+                s.setTrid(rs.getString("trid"));
+                s.setTrainType(rs.getString("train_type"));
+                s.setFromStation(rs.getString("from_station"));
+                s.setToStation(rs.getString("to_station"));
+                s.setFromTime(rs.getTimestamp("from_time"));
+                s.setToTime(rs.getTimestamp("to_time"));
+                list.add(s);
+            }
+            rs.close();
+            st.close();
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Error in getAllSchedules: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int getTotalSchedules() {
+        String sql = "SELECT COUNT(*) FROM schedules s " +
+                    "INNER JOIN trains t ON s.trid = t.id ";
+        
+        String trainType = null; //request.getParameter("type");
+        if (trainType != null && !trainType.isEmpty()) {
+            sql += "WHERE t.train_type = ?";
+        }
+        
+        try {
+            con = new DBContext().getConnection();
+            PreparedStatement st = con.prepareStatement(sql);
+            
+            if (trainType != null && !trainType.isEmpty()) {
+                st.setString(1, trainType);
+            }
+            
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            
+            rs.close();
+            st.close();
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Error in getTotalSchedules: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public List<Schedule> getSchedulesByPage(int page, int recordsPerPage, String trainType) {
+        List<Schedule> list = new ArrayList<>();
+        String sql = "SELECT s.id, s.rid, s.trid, t.train_type, r.from_station, r.to_station, s.from_time, s.to_time " +
+                    "FROM schedules s " +
+                    "INNER JOIN routes r ON s.rid = r.id " +
+                    "INNER JOIN trains t ON s.trid = t.id ";
+        
+        if (trainType != null && !trainType.isEmpty()) {
+            sql += "WHERE t.train_type = ? ";
+        }
+        
+        sql += "ORDER BY s.from_time ASC LIMIT ? OFFSET ?";
+        
+        try {
+            con = new DBContext().getConnection();
+            PreparedStatement st = con.prepareStatement(sql);
+            
+            int paramIndex = 1;
+            if (trainType != null && !trainType.isEmpty()) {
+                st.setString(paramIndex++, trainType);
+            }
+            st.setInt(paramIndex++, recordsPerPage);
+            st.setInt(paramIndex, (page - 1) * recordsPerPage);
+            
+            ResultSet rs = st.executeQuery();
+            
+            while (rs.next()) {
+                Schedule s = new Schedule();
+                s.setId(rs.getInt("id"));
+                s.setRid(rs.getInt("rid"));
+                s.setTrid(rs.getString("trid"));
+                s.setTrainType(rs.getString("train_type"));
+                s.setFromStation(rs.getString("from_station"));
+                s.setToStation(rs.getString("to_station"));
+                s.setFromTime(rs.getTimestamp("from_time"));
+                s.setToTime(rs.getTimestamp("to_time"));
+                list.add(s);
+            }
+            
+            rs.close();
+            st.close();
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Error in getSchedulesByPage: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public static void main(String[] args) throws ParseException, Exception {
         DAO dao = new DAO();
-        System.out.println(dao.searchTrainsWithRid(1));
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        String dateString = "2025-02-22";
-//        Date parsedDate = sdf.parse(dateString);
-//        List<Schedules> list = dao.searchSchedules(dao.searchRoute("Hà Nội", "Sài Gòn"), parsedDate);
-//        for (Schedules s : list) {
-//            System.out.println(s);
-//        }
-//        System.out.println(dao.login("My", "123456"));
-
-//        System.out.println(list);
-//List<Accounts> listA = dao.getAllAccounts();
-//        for (Routes o : list) {
-//            System.out.println(o);
-//        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = sdf.parse("2024-02-28");
+        List<Schedule> list = dao.searchSchedules("Hà Nội", "Sài Gòn", date);
+        for (Schedule schedule : list) {
+            System.out.println(schedule);
+        }
     }
-
 }

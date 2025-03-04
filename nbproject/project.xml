@@ -15,9 +15,6 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${&gt;&gt;&gt;&gt;&gt;&gt;&gt; f8b9629 (login, register, logout)}</file>
-                </library>
-                <library dirs="200">
                     <file>${file.reference.mysql-connector-j-9.1.0.jar-1}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
