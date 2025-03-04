@@ -61,7 +61,7 @@
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
                             <a href="home" class="nav-item nav-link active" style="color: #ffa500;">Trang chủ</a>
-                            <a href="ManageScheduleServlet" class="nav-item nav-link" style="color: white;">Quản lí lịch trình</a>
+                            <a href="manageschedule" class="nav-item nav-link" style="color: white;">Quản lí lịch trình</a>
                             <a href="" class="nav-item nav-link" style="color: white;">Quản lí tàu</a>                            
                             <a href="" class="nav-item nav-link" style="color: white;">Quản lí vé tàu</a>
                         </div>

@@ -140,7 +140,7 @@
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
                             <a href="home" class="nav-item nav-link" style="color: white;">Trang chủ</a>
-                            <a href="ManageScheduleServlet" class="nav-item nav-link active" style="color: #ffa500;">Quản lí lịch trình</a>
+                            <a href="manageschedule" class="nav-item nav-link active" style="color: #ffa500;">Quản lí lịch trình</a>
                             <a href="" class="nav-item nav-link" style="color: white;">Quản lí tàu</a>                            
                             <a href="" class="nav-item nav-link" style="color: white;">Quản lí vé tàu</a>
                         </div>
@@ -229,19 +229,19 @@
                             <ul class="pagination">
                                 <c:if test="${currentPage > 1}">
                                     <li class="page-item">
-                                        <a class="page-link" href="ManageScheduleServlet?page=${currentPage-1}">Trước</a>
+                                        <a class="page-link" href="manageschedule?page=${currentPage-1}">Trước</a>
                                     </li>
                                 </c:if>
 
                                 <c:forEach begin="1" end="${totalPages}" var="i">
                                     <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                        <a class="page-link" href="ManageScheduleServlet?page=${i}">${i}</a>
+                                        <a class="page-link" href="manageschedule?page=${i}">${i}</a>
                                     </li>
                                 </c:forEach>
 
                                 <c:if test="${currentPage < totalPages}">
                                     <li class="page-item">
-                                        <a class="page-link" href="ManageScheduleServlet?page=${currentPage+1}">Sau</a>
+                                        <a class="page-link" href="manageschedule?page=${currentPage+1}">Sau</a>
                                     </li>
                                 </c:if>
                             </ul>

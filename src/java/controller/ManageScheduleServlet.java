@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.List;
 import model.Schedule;
 
-@WebServlet(name = "ManageScheduleServlet", urlPatterns = {"/ManageScheduleServlet"})
 public class ManageScheduleServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

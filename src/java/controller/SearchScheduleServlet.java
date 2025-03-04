@@ -18,7 +18,7 @@ import model.Schedule;
 /**
  * Servlet implementation class SearchScheduleServlet
  */
-@WebServlet(name = "SearchScheduleServlet", urlPatterns = {"/searchSchedule"})
+
 public class SearchScheduleServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

@@ -168,7 +168,7 @@
                 </nav>
                 <div class=" container-fluid py-4 mb-5 " style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
                     <div class="container py-5" style="margin-top: 3rem;">
-                        <form action="searchSchedule" method="GET" id="searchForm">
+                        <form action="searchschedule" method="GET" id="searchForm">
                             <div class="station-search-container">
                                 <div class="station-input-group">
                                     <i class="fa fa-train station-icon"></i>
