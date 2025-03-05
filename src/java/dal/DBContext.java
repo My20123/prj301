@@ -24,6 +24,7 @@ public class DBContext {
     private final String user = "root";
 
     private final String password = "12345678";
+
     public static void main(String[] args) {
         try {
             System.out.println(new DBContext().getConnection());

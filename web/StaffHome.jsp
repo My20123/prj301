@@ -51,8 +51,8 @@
         <!-- Spinner End -->
         <jsp:include page="Header.jsp"></jsp:include>
          <div class="container-fluid position-relative p-0">
-                <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                    <a href="Home.jsp" class="navbar-brand p-0">
+                <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0" style="background-color: #353e4a;">
+                    <a href="" class="navbar-brand p-0">
                         <img src="logo/train_logo.png" alt="Logo">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -60,25 +60,13 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="home" class="nav-item nav-link active">Trang chủ</a>
-                            <a href="about.html" class="nav-item nav-link ">Tuyến đường</a>
-                            <a href="ScheduleDetailSearch.jsp" class="nav-item nav-link">Tàu</a>                            
-                            <a href="routeview" class="nav-item nav-link">Lịch trình</a>
-                            <a href="TicketVerifi.jsp" class="nav-item nav-link">Vé</a>
-                            <!--                                                <div class="nav-item dropdown">
-                                                                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                                                                                <div class="dropdown-menu m-0">
-                                                                                    <a href="destination.html" class="dropdown-item">Destination</a>
-                                                                                    <a href="booking.html" class="dropdown-item">Booking</a>
-                                                                                    <a href="team.html" class="dropdown-item">Travel Guides</a>
-                                                                                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                                                                    <a href="404.html" class="dropdown-item">404 Page</a>
-                                                                                </div>
-                                                                            </div>-->
+                            <a href="home" class="nav-item nav-link active" style="color: #ffa500;">Trang chủ</a>
+                            <a href="manageschedule" class="nav-item nav-link" style="color: white;">Quản lí lịch trình</a>
+                            <a href="" class="nav-item nav-link" style="color: white;">Quản lí tàu</a>                            
+                            <a href="" class="nav-item nav-link" style="color: white;">Quản lí vé tàu</a>
                         </div>
                     </div>
                 </nav>
-
             </div>
          <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
