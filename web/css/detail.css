@@ -48,7 +48,7 @@
     animation-duration: .3s; }
 
 .card1 {
-    /*background: #eee;*/
+    
     padding: 3em;
     line-height: 1.5em; }
 
@@ -120,7 +120,7 @@
     text-align: center;
     line-height: 2em; }
 .not-available:before {
-    font-family: fontawesome;
+    font-family: fontawesome, sans-serif; 
     content: "\f00d";
     color: #fff; }
 

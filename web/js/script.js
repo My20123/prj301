@@ -2,7 +2,7 @@
 
   "use strict";
 
-  var searchPopup = function() {
+  const searchPopup = function() {
       // open search box
       $('.secondary-nav').on('click', '.search-button', function(e) {
         $('.search-popup').toggleClass('is-visible');
@@ -173,13 +173,6 @@
 
     var thumb_slider = new Swiper(".thumb-swiper", {
       slidesPerView: 1,
-    });
-    var large_slider = new Swiper(".large-swiper", {
-      spaceBetween: 10,
-      effect: 'fade',
-      thumbs: {
-        swiper: thumb_slider,
-      },
     });
 
     // Initialize Isotope

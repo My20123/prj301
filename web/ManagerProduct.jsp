@@ -68,7 +68,7 @@
                                 <td>${o.id}</td>
                                 <td>${o.name}</td>
                                 <td>
-                                    <img src="${o.image}" alt="Image">
+                                    <img src="${o.image}">
                                 </td>
                                 <td>${o.price} $</td>
                                 <td>
@@ -100,7 +100,7 @@
                     <form action="add" method="post">
                         <div class="modal-header">						
                             <h4 class="modal-title">Add Product</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">					
                             <div class="form-group">

@@ -29,7 +29,6 @@ body {
     color: #fff;
     float: right;
     font-size: 13px;
-    border: none;
     min-width: 50px;
     border-radius: 2px;
     outline: none !important;
@@ -164,9 +163,8 @@ table.table .avatar {
     height: 11px;
     border: solid #000;
     border-width: 0 3px 3px 0;
-    transform: inherit;
+    transform: inherit rotateZ(45deg);
     z-index: 3;
-    transform: rotateZ(45deg);
 }
 .custom-checkbox input[type="checkbox"]:checked + label:before {
     border-color: #03A9F4;
