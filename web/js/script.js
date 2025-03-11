@@ -2,7 +2,7 @@
 
   "use strict";
 
-  var searchPopup = function() {
+  const searchPopup = function() {
       // open search box
       $('.secondary-nav').on('click', '.search-button', function(e) {
         $('.search-popup').toggleClass('is-visible');
@@ -137,30 +137,6 @@
       },
     });
 
-    var swiper = new Swiper("#featured-products .product-swiper-two", {
-      pagination: {
-        el: "#featured-products .swiper-pagination",
-        clickable: true,
-      },
-      breakpoints: {
-        0: {
-          slidesPerView: 1,
-          spaceBetween: 30,
-        },
-        768: {
-          slidesPerView: 2,
-          spaceBetween: 30,
-        },
-        999: {
-          slidesPerView: 4,
-          spaceBetween: 30,
-        },
-        1299: {
-          slidesPerView: 5,
-          spaceBetween: 30,
-        },
-      },
-    });
 
     var swiper = new Swiper("#flash-sales .product-swiper", {
       pagination: {
@@ -197,13 +173,6 @@
 
     var thumb_slider = new Swiper(".thumb-swiper", {
       slidesPerView: 1,
-    });
-    var large_slider = new Swiper(".large-swiper", {
-      spaceBetween: 10,
-      effect: 'fade',
-      thumbs: {
-        swiper: thumb_slider,
-      },
     });
 
     // Initialize Isotope

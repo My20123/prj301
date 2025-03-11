@@ -151,15 +151,7 @@
                                         </ul>
                                     </li>
 
-                                    <!--                                        <li class="menu-item has-sub">
-                                                                                <a href="blog.html" class="item-anchor d-flex align-item-center" data-effect="Blog">Blog<i class="icon icon-chevron-down"></i></a>
-                                                                                <ul class="submenu">
-                                                                                    <li><a href="blog.html" class="item-anchor">Blog</a></li>
-                                                                                    <li><a href="blog-sidebar.html" class="item-anchor">Blog with sidebar<span class="text-primary"> (PRO)</span></a></li>
-                                                                                    <li><a href="blog-masonry.html" class="item-anchor">Blog masonry<span class="text-primary"> (PRO)</span></a></li>
-                                                                                    <li><a href="single-post.html" class="item-anchor">Single post</a></li>
-                                                                                </ul>
-                                                                            </li>-->
+                                    
 
                                     <li><a href="contact.html" class="item-anchor" data-effect="Contact">Contact</a></li>
 
