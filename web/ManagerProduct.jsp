@@ -116,7 +116,7 @@
                                 <input name="price" type="text" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label>Title</label>
+                                <label for="title">Title</label>
                                 <textarea name="title" class="form-control" required></textarea>
                             </div>
                             <div class="form-group">
