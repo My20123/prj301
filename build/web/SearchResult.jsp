@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -41,13 +43,42 @@
         <link href="css/trainshow.css" rel="stylesheet">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"> 
         <style>
+            .cart-section .card {
+                border: 1px solid black;
+                border-radius: 5px;
+                background-color: white;
+            }
 
+            .cart-section .card-header {
+                background-color: white;
+                border-bottom: 1px solid rgba(0,0,0,0.125);
+            }
+
+            .cart-section .card-footer {
+                background-color: white;
+                border-top: 1px solid rgba(0,0,0,0.125);
+            }
+
+            .cart-section .text-primary {
+                color: #005F7A !important;
+            }
+
+            .cart-section .btn-primary {
+                background-color: #00a3ee   ;
+                border-color: #00a3ee ;
+            }
+
+            .cart-section .btn-primary:hover {
+                background-color: #33b5f7  ;
+                border-color: #33b5f7  ;
+            }
 
             .cart-item {
                 padding: 10px;
                 margin: 5px 0;
                 background-color: #f9f9f9;
                 border-radius: 3px;
+                font-size:10px;
             }
 
             .selected-seat {
@@ -62,176 +93,28 @@
             .et-car-nm-64-sit:hover {
                 background-color: #f5f5f5;
             }
+
+            .caIcon.et-car-icon.et-car-icon-selected {
+                background-color: #a6b727 !important;
+            }
+
+            .et-car-block .caIcon.et-car-icon.et-car-icon-selected {
+                background-color: #a6b727 !important;
+            }
+
+            .et-car-block .caIcon.et-car-icon {
+                cursor: pointer;
+            }
         </style>
-        <script>
-            // Form validation
-            function validateForm() {
-            var fromStation = document.getElementById('from_station').value;
-            var toStation = document.getElementById('to_station').value;
-            var departDate = document.getElementById('datepicker').value;
-            var returnDate = document.getElementById('return_datepicker').value;
-            if (!fromStation || !toStation) {
-            alert('Vui lòng chọn ga đi và ga đến');
-            return false;
-            }
 
-            if (fromStation === toStation) {
-            alert('Ga đi và ga đến không được trùng nhau');
-            return false;
-            }
-
-            if (!departDate) {
-            alert('Vui lòng chọn ngày đi');
-            return false;
-            }
-
-            // Validate dates
-            var today = new Date();
-            today.setHours(0, 0, 0, 0);
-            var depart = new Date(departDate);
-            if (depart < today) {
-            alert('Ngày đi không thể là ngày trong quá khứ');
-            return false;
-            }
-
-            if (returnDate) {
-            var returnD = new Date(returnDate);
-            if (returnD < depart) {
-            alert('Ngày về phải sau ngày đi');
-            return false;
-            }
-            }
-
-            return true;
-            }
-
-            // Function to swap stations
-            function swapData() {
-            var fromStation = document.getElementById('from_station');
-            var toStation = document.getElementById('to_station');
-            var temp = fromStation.value;
-            fromStation.value = toStation.value;
-            toStation.value = temp;
-            }
-
-            // Set min date for datepickers to today
-            window.onload = function() {
-            var today = new Date().toISOString().split('T')[0];
-            document.getElementById('datepicker').min = today;
-            document.getElementById('return_datepicker').min = today;
-            // Add event listener to update return date min value when depart date changes
-            document.getElementById('datepicker').addEventListener('change', function() {
-            document.getElementById('return_datepicker').min = this.value;
-            });
-            }
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-            // Train selection
-            const trainBlocks = document.querySelectorAll('.et-train-block');
-            const trainHeads = document.querySelectorAll('.et-train-head');
-            const cabinContainer = document.querySelector('.cabin-container');
-            // Cabin selection
-            const carBlocks = document.querySelectorAll('.et-car-block');
-            const carIcons = document.querySelectorAll('.et-car-icon');
-            // Handle train selection
-            trainBlocks.forEach(block => {
-            block.addEventListener('click', function(e) {
-            const trainHead = this.querySelector('.et-train-head');
-            if (!trainHead || e.target.closest('.et-train-head')) return;
-            const trainId = this.getAttribute('data-train-id');
-            selectTrain(trainId, trainHead);
-            loadCabins(trainId);
-            });
-            });
-            trainHeads.forEach(head => {
-            head.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const trainBlock = this.closest('.et-train-block');
-            selectTrain(trainBlock.getAttribute('data-train-id'), this);
-            });
-            });
-            // Handle cabin selection
-            carBlocks.forEach(block => {
-            block.addEventListener('click', function(e) {
-            const carIcon = this.querySelector('.et-car-icon');
-            if (!carIcon || e.target.closest('.et-car-icon')) return;
-            selectCabin(carIcon.getAttribute('data-cabin-id'), carIcon);
-            });
-            });
-            carIcons.forEach(icon => {
-            icon.addEventListener('click', function(e) {
-            e.stopPropagation();
-            selectCabin(this.getAttribute('data-cabin-id'), this);
-            });
-            });
-            function selectTrain(trainId, trainHead) {
-            if (!trainId || !trainHead) return;
-            // Update visual selection
-            trainHeads.forEach(h => h.classList.remove('et-train-head-selected'));
-            trainHead.classList.add('et-train-head-selected');
-            // Update URL and redirect
-            const currentUrl = new URL(window.location.href);
-            const currentCabinId = currentUrl.searchParams.get('cabinId');
-            currentUrl.searchParams.set('trainId', trainId);
-            if (currentCabinId) {
-            currentUrl.searchParams.delete('cabinId');
-            }
-
-            window.location.href = currentUrl.toString();
-            }
-
-            function selectCabin(cabinId, carIcon) {
-            if (!cabinId || !carIcon) return;
-            // Update visual selection
-            carIcons.forEach(icon => icon.classList.remove('et-car-icon-selected'));
-            carIcon.classList.add('et-car-icon-selected');
-            // Update URL and redirect
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('cabinId', cabinId);
-            window.location.href = currentUrl.toString();
-            }
-
-            // Initialize selections from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const trainId = urlParams.get('trainId');
-            const cabinId = urlParams.get('cabinId');
-            // Set initial train selection
-            if (trainId) {
-            const trainBlock = document.querySelector(`.et-train-block[data-train-id="${trainId}"]`);
-            if (trainBlock) {
-            const trainHead = trainBlock.querySelector('.et-train-head');
-            if (trainHead) {
-            trainHead.classList.add('et-train-head-selected');
-            }
-            }
-            } else if (trainHeads.length > 0) {
-            // Select first train by default
-            const firstTrainBlock = trainHeads[0].closest('.et-train-block');
-            const firstTrainId = firstTrainBlock.getAttribute('data-train-id');
-            if (firstTrainId) {
-            selectTrain(firstTrainId, trainHeads[0]);
-            }
-            }
-
-            // Set initial cabin selection
-            if (cabinId) {
-            const carIcon = document.querySelector(`.et-car-icon[data-cabin-id="${cabinId}"]`);
-            if (carIcon) {
-            carIcon.classList.add('et-car-icon-selected');
-            }
-            }
-            });
-        </script>
     </head>
     <body >
         <!--                 Spinner Start -->
-        <!-- <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div> -->
+                 <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div> 
         <!--                 Spinner End -->
         <jsp:include page="Header.jsp"></jsp:include>
             <!-- Navbar & Hero Start -->
@@ -265,22 +148,22 @@
                                     <div class="SingleDatePickerInput SingleDatePickerInput_1" >
                                         <div class="DateInput DateInput_1" style="display: flex;justify-content: normal;width: auto;margin: 0 auto;">
                                             <p>Thời gian đi <input type="date" id="datepicker" name="depart_date" value="${from_date}"></p>
-                                            <div class="search-stations__divider"></div>
-                                            <p style="margin-left: 5px;">Thời gian về <input type="date" id="return_datepicker" name="return_date"></p>
-                                        </div>
+                                        <div class="search-stations__divider"></div>
+                                        <p style="margin-left: 5px;">Thời gian về <input type="date" id="return_datepicker" name="return_date" value="${return_date}"></p>
                                     </div>
                                 </div>
-                                <div class="search-stations">
-                                    <div class="station-select">
-                                        <div class=" css-aakg73-container">
-                                            <span id="react-select-2-live-region" class="css-7pg0cj-a11yText"></span>
-                                            <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="css-7pg0cj-a11yText"></span>
-                                            <div class="react-select__control css-cv0q10">
-                                                <div class="react-select__value-container css-76smiy">
-                                                    <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-2-placeholder" style="margin-left: 25px;">Ga đi</div>
-                                                    <div class="search-station-input-wrapper">
-                                                        <div class="react-select__input-container css-19bb58m" data-value="">
-                                                            <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="from_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-2-placeholder" value="${depart}" style="color: inherit; background: 0px center; opacity: 1;  width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
+                            </div>
+                            <div class="search-stations">
+                                <div class="station-select">
+                                    <div class=" css-aakg73-container">
+                                        <span id="react-select-2-live-region" class="css-7pg0cj-a11yText"></span>
+                                        <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="css-7pg0cj-a11yText"></span>
+                                        <div class="react-select__control css-cv0q10">
+                                            <div class="react-select__value-container css-76smiy">
+                                                <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-2-placeholder" style="margin-left: 25px;">Ga đi</div>
+                                                <div class="search-station-input-wrapper">
+                                                    <div class="react-select__input-container css-19bb58m" data-value="">
+                                                        <input class="react-select__input" list="stations"  id="from_station"  value="${depart}" style="color: inherit; background: 0px center; opacity: 1;  width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
                                                         <datalist id="stations">
                                                             <c:forEach items="${listS}" var="station">
                                                                 <option value="${station}">${station}</option>
@@ -308,7 +191,7 @@
                                                 <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-3-placeholder" style="margin-left: 25px;">Ga đến</div>
                                                 <div class="search-station-input-wrapper">
                                                     <div class="react-select__input-container css-19bb58m" data-value="">
-                                                        <input class="react-select__input" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="to_station" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-3-placeholder" value="${desti}" style="color: inherit; background: 0px center; opacity: 1; width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px; margin-left:40px ;outline: 0px; padding: 0px;">
+                                                        <input class="react-select__input" list="stations" id="to_station" value="${desti}" style="color: inherit; background: 0px center; opacity: 1; width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px; margin-left:40px ;outline: 0px; padding: 0px;">
                                                         <datalist id="stations">
                                                             <c:forEach items="${listS}" var="station">
                                                                 <option value="${station}">${station}</option>
@@ -322,234 +205,227 @@
                                 </div>
                             </div>
                             <button class="train-search__submit-btn" type="submit">Tìm kiếm</button>
+                        </div>
                     </form>
                 </div>
             </div>
-        </div>
 
-        <!-- Nav end -->
+            <!-- Nav end -->
 
-        <div  class="container-fluid py-lg-5" style="background-color: #fafafa;margin-top: 6rem;">
-            <div class="container py-5">
-                <div class="row" style="top:3rem;">
-                    <div class="col-xs-12 col-sm-8 et-col-md-9" style="border: 1px solid black;background-color: white;border-radius: 5px;"">
-                        <div class="row et-page-header">
-                            <span class="et-main-label ng-binding"> 
-                                <strong class="ng-binding">Chiều đi:</strong> ngày ${from_date} từ ${depart} đến ${desti}</span>
-                        </div>
-                        <div class="row et-train-list">
-                            <div class="previous-train et-col-md-1 text-center">
-                                <div class="et-pre-train ng-scope et-arrow-disabled" ng-class="{'et-arrow-disabled': !canShiftBack}" ng-click="chuyenTruoc(true)" tooltip="Tàu trước">
-                                    <div class="et-arrow-left"></div>
-                                </div>
-                            </div>                            
-                            <div class="train-group"> 
-                                <c:forEach items="${departSchedules}" var="schedule">
-                                    <div class="col-xs-4 col-sm-3 et-col-md-2 et-train-block ng-scope"  analytics-on="click" analytics-event="SelectTrain">
-                                        <div class="et-train-head"  data-train-id="${schedule.getTrid()}">
-                                            <div class="row center-block" style="width: 40%; margin-bottom: 3px">
-                                                <div class="et-train-lamp text-center ng-binding" style="color:#bf8c01;">${schedule.getTrid()}</div> 
-                                            </div> 
-                                            <div class="et-train-head-info">
-                                                <div class="row et-no-margin">
-                                                    <span class="pull-left et-bold ng-binding">TG đi</span> 
-                                                    <span class="pull-right"></span> 
-                                                    <span class="pull-right ng-binding">${schedule.getFrom_time()}</span>
-                                                </div>
-                                                <div class="row et-no-margin">
-                                                    <span class="pull-left et-bold ng-binding">TG đến</span> 
-                                                    <span class="pull-right"></span> 
-                                                    <span class="pull-right ng-binding">05/03 18:10</span></div>
-                                                <div class="row et-no-margin">
-                                                    <div class="et-col-50 text-center">
-                                                        <div class="et-text-sm ng-binding">SL chỗ trống</div>
-                                                        <div class="et-text-large et-bold pull-right ng-binding" style="margin-right: 5px">${dao.searchAvailSeatsOfTrainWithScheduleID(schedule.getId())}</div>
+            <div  class="container-fluid py-lg-5" style="background-color: #fafafa;margin-top: 6rem;">
+                <div class="container py-5">
+                    <div class="row" style="top:3rem;">
+                        <div class="col-xs-12 col-sm-8 et-col-md-9" style="border: 1px solid black;background-color: white;border-radius: 5px;">
+                            <div class="row et-page-header">
+                                <span class="et-main-label ng-binding"> 
+                                    <i class="fas fa-train me-2"></i><strong class="ng-binding">Chiều đi:</strong> ngày ${from_date} từ ${depart} đến ${desti} <i class="fas fa-long-arrow-alt-right mx-2"></i></span>
+                            </div>
+                            <div class="row et-train-list">
+                                <div class="previous-train et-col-md-1 text-center">
+                                    <div class="et-pre-train ng-scope et-arrow-disabled" ng-class="{'et-arrow-disabled': !canShiftBack}" ng-click="chuyenTruoc(true)" tooltip="Tàu trước">
+                                        <div class="et-arrow-left"></div>
+                                    </div>
+                                </div>                            
+                                <div class="train-group"> 
+                                    <c:forEach items="${departSchedules}" var="schedule">
+                                        <div class="col-xs-4 col-sm-3 et-col-md-2 et-train-block ng-scope"  analytics-on="click" analytics-event="SelectTrain">
+                                            <div class="et-train-head"  data-train-id="${schedule.getTrid()}">
+                                                <div class="row center-block" style="width: 40%; margin-bottom: 3px">
+                                                    <div class="et-train-lamp text-center ng-binding" style="color:#bf8c01;">${schedule.getTrid()}</div> 
+                                                </div> 
+                                                <div class="et-train-head-info">
+                                                    <div class="row et-no-margin">
+                                                        <span class="pull-left et-bold ng-binding">TG đi</span> 
+                                                        <span class="pull-right"></span> 
+                                                        <span class="pull-right ng-binding">${schedule.getFromTime()}</span>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row et-no-margin">
-                                                <div class="et-col-50">
-                                                    <span class="et-train-lamp-bellow-left"></span>
-                                                </div>
-                                                <div class="et-col-50">
-                                                    <span class="et-train-lamp-bellow-right"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="et-train-base"></div>
-                                        <div class="et-train-base-2"></div>
-                                        <div class="et-train-base-3"></div>
-                                        <div class="et-train-base-4"></div>
-                                        <div class="et-train-base-5"></div>
-                                    </div>   
-                                </c:forEach>     
-                            </div>
-
-                            <div class="next-train col-md-1 text-center pull-right">
-                                <div class="et-next-train ng-scope" ng-class="{'et-arrow-disabled': !canShiftForward}" ng-click="chuyenSau(true)" tooltip="Tàu sau">
-                                    <div class="et-arrow-right"></div>
-                                </div>
-                            </div>
-                        </div>                    
-                        <div class="row" style="margin-left:-10PX">
-                            <div class="col-md-12 et-no-margin">
-
-                                <c:forEach items="${dao.searchCabinsWithTrainID('SE1')}" var="cabin">
-                                    <div class="et-car-block ng-scope" tooltip="Giường nằm khoang 4 điều hòa (An28LV)">
-                                        <div data-cabin-id="${cabin.getId()}" class="et-car-icon
-                                             <c:if test="${dao.searchAvailSeatsOfCabinWithCabinID(cabin.getId()) == 0}"> et-car-icon-sold-out</c:if>
-                                             <c:if test="${cabin.getStatus() == 1 && !cabin.isSelected()}"> et-car-icon-available</c:if>
-                                             <c:if test="${cabin.getStatus() == 0 && !cabin.isSelected()}"> et-car-icon-full</c:if>
-                                             <c:if test="${cabin.getStatus() == 2 && !cabin.isSelected()}"> et-car-icon-sold-out</c:if>
-                                             <c:if test="${cabin.isChonChoTuDong() && !cabin.isSelected()}"> et-car-icon-other</c:if>">
-
-                                                 <img src="img/trainCar2.png" ng-show="!toa.IsChonChoTuDong" class="">
-                                                 <img src="img/trainCarAuto.png" ng-show="toa.IsChonChoTuDong" class="ng-hide">
-                                             </div>
-                                             <div class="text-center text-info et-car-label ng-binding">${cabin.getId()}</div>
-                                    </div>
-                                </c:forEach>
-<!--<div id="car-icon-${cabin.id}" class="et-car-icon" onclick="selectCabin('${cabin.id}')" 
-                                             data-cabin-id="${cabin.id}"-->
-                                <!-- This will show the selected schedule ID at the bottom of the cabins list -->
-                                <div class="et-car-block">
-                                    <div class="et-car-icon">
-                                        <img src="img/train2.png">
-                                    </div>
-                                    <div class="text-center text-info et-car-label ng-binding">SE1</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                            <h4 class="ng-binding">Toa số 1: Ngồi mềm điều hòa</h4>
-                        </div>
-                        <div class="et-col-5"><div class="et-car-previous-floor text-center" ng-click="previousCar()">&lt;</div></div>
-                        <div class="et-col-90">
-                            <div class="et-full-width et-car-loading ng-hide" ng-show="!seatMap[0].Status">
-                                <div class="row text-capitalize text-center">
-                                    <!--                                    <img src="/img/loading51.gif" style="width: 20px; height: 20px">-->
-                                </div>
-                                <div class="row text-center">
-                                    <!--                                    <span class="ng-binding">?ang t?i th?ng tin toa</span>-->
-                                </div>
-                            </div>
-                            <div class="row et-car-floor">
-                                <!--                                <div class="et-car-door">
-                                                                </div>-->
-                                <div class="et-car-nm-64-half-block">
-                                    <div class="et-full-width" style="margin-left: 30px;">
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" onclick="selectSeat(this, '1', '1037000', 'SE1', '1')">
-                                            <div class="et-car-seat-left et-seat-h-35">
-                                                <div class="et-col-16 et-sit-side"></div>
-                                                <div class="et-col-84 et-sit-sur-outer">
-                                                    <div class="et-sit-sur text-center">
-                                                        <div class="et-sit-no ng-scope">
-                                                            <span class="ng-binding">1</span>
+                                                    <div class="row et-no-margin">
+                                                        <span class="pull-left et-bold ng-binding">TG đến</span> 
+                                                        <span class="pull-right"></span> 
+                                                        <span class="pull-right ng-binding">${schedule.getToTime()}</span></div>
+                                                    <div class="row et-no-margin">
+                                                        <div class="et-col-50 text-center">
+                                                            <div class="et-text-sm ng-binding">SL chỗ trống</div>
+                                                            <div class="et-text-large et-bold pull-right ng-binding" style="margin-right: 5px">${dao.searchAvailSeatsOfTrainWithScheduleID(schedule.getId())}</div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="row et-no-margin">
+                                                    <div class="et-col-50">
+                                                        <span class="et-train-lamp-bellow-left"></span>
+                                                    </div>
+                                                    <div class="et-col-50">
+                                                        <span class="et-train-lamp-bellow-right"></span>
+                                                    </div>
+                                                </div>
                                             </div>
+                                            <div class="et-train-base"></div>
+                                            <div class="et-train-base-2"></div>
+                                            <div class="et-train-base-3"></div>
+                                            <div class="et-train-base-4"></div>
+                                            <div class="et-train-base-5"></div>
+                                        </div>   
+                                    </c:forEach>     
+                                </div>
+
+                                <div class="next-train col-md-1 text-center pull-right">
+                                    <div class="et-next-train ng-scope" ng-class="{'et-arrow-disabled': !canShiftForward}" ng-click="chuyenSau(true)" tooltip="Tàu sau">
+                                        <div class="et-arrow-right"></div>
+                                    </div>
+                                </div>
+                            </div>                    
+                            <div class="row" style="margin-left:-10PX">
+                                <!-- Cabin List -->
+                                <c:forEach items="${departSchedules}" var="schedule" varStatus="status">
+                                    <div id="cabin-container-${schedule.getTrid()}" class="col-md-12 et-no-margin" style="display:none;">
+                                        <div class="et-car-block">
+                                            <div class="et-car-icon">
+                                                <img src="img/train2.png">
+                                            </div>
+                                            <div class="text-center text-info et-car-label ng-binding">${schedule.getTrid()}</div>
                                         </div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[7]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">8</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[8]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">9</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[15]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">16</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[16]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">17</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[23]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">24</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[24]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">25</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[1]" direct="direct" style="clear: left;"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">2</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[6]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">7</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[9]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">10</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[14]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">15</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[17]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">18</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[22]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">23</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[25]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">26</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-way et-full-width"></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[2]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">3</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[5]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">6</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[10]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">11</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[13]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">14</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[18]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">19</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[21]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">22</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[26]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">27</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[3]" direct="direct" style="clear: left;"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">4</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[4]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">5</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[11]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">12</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[12]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">13</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[19]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">20</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[20]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">21</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-left="" seat="seatMap[27]" direct="direct"><div class="et-car-seat-left et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-16 et-sit-side"></div><div class="et-col-84 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">28</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div></div></div>
-                                    </div>
-                                </div>
-                                <div class="et-car-seperator" ng-class="{'et-hidden': !seatMap[0].Status}">
-                                    <div>
+                                        <c:forEach items="${dao.searchCabinsWithTrainID(schedule.getTrid())}" var="cabin"> 
+                                            <div class="et-car-block ng-scope">
+                                                <div data-cabin-type="${cabin.getCtype()}" data-cabin-id="${cabin.getId()}" data-schedule-id="${schedule.getId()}"
+                                                     class="caIcon et-car-icon ${cabin.getStatus() == 1 && !cabin.isSelected() ? 'et-car-icon-avaiable' : ''}
+                                                     ${cabin.getStatus() == 0 && !cabin.isSelected() ? 'et-car-icon-full' : ''}
+                                                     ${cabin.getStatus() == 2 && !cabin.isSelected() ? 'et-car-icon-sold-out' : ''}
+                                                     ${cabin.isChonChoTuDong() && !cabin.isSelected() ? 'et-car-icon-other' : ''}"
+                                                     style="<c:out value='display: block;' escapeXml='false'/>">
+                                                    <img src="img/trainCar2.png" ng-show="!toa.IsChonChoTuDong">
+                                                    <img src="img/trainCarAuto.png" ng-show="toa.IsChonChoTuDong" class="ng-hide">
+                                                </div>
+                                                <c:set var="cabinNumber" value="${fn:split(cabin.getId(), '/')[1]}" />
 
+                                                <div class="text-center text-info et-car-label ng-binding">${cabinNumber}</div>
+                                            </div>
+                                        </c:forEach>
                                     </div>
-                                    <div>
+                                </c:forEach>
+                            </div>
 
+                            <div class="showCabin"></div>
+<c:if test="${trip_type == 'roundTrip'}">
+   
+    <div class="row et-page-header">
+        <span class="et-main-label ng-binding" style="margin-top: :30px"> 
+                                    <i class="fas fa-train me-2"></i><strong class="ng-binding">Chiều về:</strong> ngày ${return_date} từ ${desti} đến ${depart} <i class="fas fa-long-arrow-alt-right mx-2"></i></span>
+                            </div>
+                            <div class="row et-train-list">
+                                <div class="previous-train et-col-md-1 text-center">
+                                    <div class="et-pre-train ng-scope et-arrow-disabled" ng-class="{'et-arrow-disabled': !canShiftBack}" ng-click="chuyenTruoc(true)" tooltip="Tàu trước">
+                                        <div class="et-arrow-left"></div>
                                     </div>
+                                </div>                            
+                                <div class="train-group"> 
+                                    <c:forEach items="${return_schedules}" var="schedule">
+                                        <div class="col-xs-4 col-sm-3 et-col-md-2 et-train-block ng-scope"  analytics-on="click" analytics-event="SelectTrain">
+                                            <div class="et-train-head"  data-train-id="${schedule.getTrid()}">
+                                                <div class="row center-block" style="width: 40%; margin-bottom: 3px">
+                                                    <div class="et-train-lamp text-center ng-binding" style="color:#bf8c01;">${schedule.getTrid()}</div> 
+                                                </div> 
+                                                <div class="et-train-head-info">
+                                                    <div class="row et-no-margin">
+                                                        <span class="pull-left et-bold ng-binding">TG đi</span> 
+                                                        <span class="pull-right"></span> 
+                                                        <span class="pull-right ng-binding">${schedule.getFromTime()}</span>
+                                                    </div>
+                                                    <div class="row et-no-margin">
+                                                        <span class="pull-left et-bold ng-binding">TG đến</span> 
+                                                        <span class="pull-right"></span> 
+                                                        <span class="pull-right ng-binding">${schedule.getToTime()}</span></div>
+                                                    <div class="row et-no-margin">
+                                                        <div class="et-col-50 text-center">
+                                                            <div class="et-text-sm ng-binding">SL chỗ trống</div>
+                                                            <div class="et-text-large et-bold pull-right ng-binding" style="margin-right: 5px">${dao.searchAvailSeatsOfTrainWithScheduleID(schedule.getId())}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row et-no-margin">
+                                                    <div class="et-col-50">
+                                                        <span class="et-train-lamp-bellow-left"></span>
+                                                    </div>
+                                                    <div class="et-col-50">
+                                                        <span class="et-train-lamp-bellow-right"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="et-train-base"></div>
+                                            <div class="et-train-base-2"></div>
+                                            <div class="et-train-base-3"></div>
+                                            <div class="et-train-base-4"></div>
+                                            <div class="et-train-base-5"></div>
+                                        </div>   
+                                    </c:forEach>     
                                 </div>
-                                <div class="et-car-nm-64-half-block">
-                                    <div class="et-full-width" style="margin-left: 8px;">
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[31]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">32</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[32]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">33</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[39]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">40</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[40]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">41</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[47]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">48</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[48]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">49</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[55]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">56</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[30]" direct="direct" style="clear: left;"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">31</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[33]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">34</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[38]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">39</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[41]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">42</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[46]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">47</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[49]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">50</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[54]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">55</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-way et-full-width"></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[29]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">30</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[34]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">35</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[37]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">38</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[42]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">43</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[45]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">46</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[50]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-avaiable" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Giá: 1,037,000 VNĐ" data-popover-title="Chỗ trống" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">51</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[53]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">54</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[28]" direct="direct" style="clear: left;"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">29</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[35]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">36</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[36]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">37</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[43]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">44</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[44]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">45</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[51]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">52</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                        <div class="et-car-nm-64-sit ng-isolate-scope" et-seat-right="" seat="seatMap[52]" direct="direct"><div class="et-car-seat-right et-seat-h-35" analytics-on="click" analytics-event="SelectTicket" ng-click="buyTicket(seat, direct)" ng-show="seat.Status"><div class="et-col-84 et-sit-sur-outer-invert"><div class="et-sit-sur-invert text-center et-sit-bought" ng-class="{'et-sit-booked': seat.Status.Status == 2,'et-sit-bought': seat.Status.Status == 1, 'et-sit-longer': seat.Status.Status == 5, 'can-buy': seat.Status.Status == 5 & amp; & amp; seat.detail.fee > 0, 'et-sit-blocked': seat.Status.Status == 4 & amp; & amp; (!seat.Status.LyDo || seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') == - 1), 'et-sit-avaiable': seat.Status.Status == 3, 'et-sit-buying': seat.Status.Status == 6, 'et-sit-distancing': seat.Status.Status == 4 & amp; & amp; seat.Status.LyDo & amp; & amp; seat.Status.LyDo.toLowerCase().indexOf('chỗ giãn cách') != - 1}"><div data-popover="Chỗ đã bán" data-popover-title="Chỗ đã bán" data-popover-trigger="mouseenter" data-popover-placement="top" class="et-sit-no ng-scope"><span ng-show="!seat.waiting" class="ng-binding">53</span> <img src="img/loading51.gif" ng-show="seat.waiting" class="ng-hide"></div></div></div><div class="et-col-16 et-sit-side"></div></div></div>
-                                    </div>
-                                </div>
-                                <div class="et-car-door">
 
+                                <div class="next-train col-md-1 text-center pull-right">
+                                    <div class="et-next-train ng-scope" ng-class="{'et-arrow-disabled': !canShiftForward}" ng-click="chuyenSau(true)" tooltip="Tàu sau">
+                                        <div class="et-arrow-right"></div>
+                                    </div>
                                 </div>
+                            </div>                    
+                            <div class="row" style="margin-left:-10PX">
+                                <!-- Cabin List -->
+                                <c:forEach items="${return_schedules}" var="schedule" varStatus="status">
+                                    <div id="cabin-container-${schedule.getTrid()}" class="col-md-12 et-no-margin" style="display:none;">
+                                        <div class="et-car-block">
+                                            <div class="et-car-icon">
+                                                <img src="img/train2.png">
+                                            </div>
+                                            <div class="text-center text-info et-car-label ng-binding">${schedule.getTrid()}</div>
+                                        </div>
+                                        <c:forEach items="${dao.searchCabinsWithTrainID(schedule.getTrid())}" var="cabin"> 
+                                            <div class="et-car-block ng-scope">
+                                                <div data-cabin-type="${cabin.getCtype()}" data-cabin-id="${cabin.getId()}" data-schedule-id="${schedule.getId()}"
+                                                     class="caIcon et-car-icon ${cabin.getStatus() == 1 && !cabin.isSelected() ? 'et-car-icon-avaiable' : ''}
+                                                     ${cabin.getStatus() == 0 && !cabin.isSelected() ? 'et-car-icon-full' : ''}
+                                                     ${cabin.getStatus() == 2 && !cabin.isSelected() ? 'et-car-icon-sold-out' : ''}
+                                                     ${cabin.isChonChoTuDong() && !cabin.isSelected() ? 'et-car-icon-other' : ''}"
+                                                     style="<c:out value='display: block;' escapeXml='false'/>">
+                                                    <img src="img/trainCar2.png" ng-show="!toa.IsChonChoTuDong">
+                                                    <img src="img/trainCarAuto.png" ng-show="toa.IsChonChoTuDong" class="ng-hide">
+                                                </div>
+                                                <c:set var="cabinNumber" value="${fn:split(cabin.getId(), '/')[1]}" />
+
+                                                <div class="text-center text-info et-car-label ng-binding">${cabinNumber}</div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </c:forEach>
+                            </div>
+
+                            <div class="showCabin"></div>
+</c:if>
+
+
+                            <div class="et-col-md-12 table-bordered list-ticket-deskhop" ng-show="(searchData.toaDi & amp; & amp; !searchData.toaDi.IsChonChoTuDong) || (searchData.toaVe & amp; & amp; !searchData.toaVe.IsChonChoTuDong)" style="margin-top: 20px; padding: 5px"><div class="et-col-md-12"><div class="et-col-md-4 et-no-padding"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-avaiable"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa còn vé</span></div></div><div class="et-col-md-12 text-center et-no-padding ng-binding" style="margin-top: -20px;display:none">Toa còn vé</div></div></div><div class="et-col-md-3 et-no-padding" style="display:none"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px;"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-full"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa chưa bán</span></div></div><div class="et-col-md-12 et-no-padding text-center ng-binding" style="margin-top: -20px;display:none">Toa chưa bán</div></div></div><div class="et-col-md-4 et-no-padding"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px;"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-selected"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa đang chọn</span></div></div><div class="et-col-md-12 et-no-padding text-center ng-binding" style="margin-top: -20px;display:none">Toa đang chọn</div></div></div><div class="et-col-md-4 et-no-padding"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px;"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-sold-out"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa hết vé</span></div></div><div class="et-col-md-12 text-center et-no-padding ng-binding" style="margin-top: -20px;display:none">Toa hết vé</div></div></div></div><div class="et-col-md-12 table-bordered"></div><div class="et-col-md-12 et-legend" style="padding:0px"><div class="et-col-md-4" style="padding: 0px"><div class="et-col-md-4" style="padding: 0px"><div class="row"><div class="et-car-nm-64-sit et-col-md-6" style="padding-right:0px"><div class="et-col-16 et-sit-side"></div><div class="et-col-64 et-sit-sur-outer"><div class="et-sit-sur text-center"></div></div></div><div class="et-bed-left et-col-md-3 et-no-padding" style="width:30%"><div class="et-bed-outer"><div class="et-bed text-center"></div><div class="et-bed-illu"></div></div></div></div></div><div class="et-col-md-8" style="padding: 0px"><div class="et-legend-label ng-binding" style="margin-left:-6px">Chỗ trống</div></div></div><div class="et-col-md-4" style="padding: 0px"><div class="et-col-md-4" style="padding: 0px"><div class="row"><div class="et-car-nm-64-sit et-col-md-6" style="padding-right:0px"><div class="et-col-16 et-sit-side"></div><div class="et-col-64 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-longer"></div></div></div><div class="et-bed-left et-col-md-3 et-no-padding" style="width:30%"><div class="et-bed-outer"><div class="et-bed text-center et-sit-longer"></div><div class="et-bed-illu"></div></div></div></div></div><div class="et-col-md-8" style="padding: 0px"><div class="et-legend-label ng-binding" style="margin-left:-6px">Chỗ chưa cắt chặng</div></div></div><div class="et-col-md-4" style="padding: 0px"><div class="et-col-md-4" style="padding: 0px"><div class="row"><div class="et-car-nm-64-sit et-col-md-6" style="padding-right:0px"><div class="et-col-16 et-sit-side"></div><div class="et-col-64 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-blocked"></div></div></div><div class="et-bed-left et-col-md-3 et-no-padding" style="width:30%"><div class="et-bed-outer"><div class="et-bed text-center et-sit-blocked"></div><div class="et-bed-illu"></div></div></div></div></div><div class="et-col-md-8" style="padding: 0px"><div class="et-legend-label ng-binding" style="margin-left:-6px">Chỗ đã bán, không bán</div></div></div></div></div>
+                        </div>
+                        <div class="col-3 cart-section" style="position: sticky; top: 20px;">
+                            <div class="card">
+                                <div class="et-main-label" style="margin-top:10px;">
+                                    <span class="et-main-label ng-binding"> 
+                                        <i class="fas fa-shopping-cart me-2"></i><strong >Giỏ vé:</strong>
+                                    </span>
+                                </div>
+                                <form action="processOrder" method="POST" id="bookingForm" >
+                                    <div id="cartItems" class="card-body" style="max-height: 400px; overflow-y: auto;"></div>
+                                    <div class="card-footer" id="card-footer" style="display:none;">
+                                        <input type="hidden" name="selectedSeats" id="selectedSeatsInput">
+                                        <input type="hidden" name="from_station" value="${depart}">
+                                        <input type="hidden" name="to_station" value="${desti}">
+                                        <input type="hidden" name="from_date" value="${from_date}">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-ticket-alt me-2"></i>Đặt vé
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-
-                        <div class="et-col-5"><div class="et-car-next-floor text-center" ng-click="nextCar()">&gt;</div></div>
-                    <div class="et-col-md-12 table-bordered list-ticket-deskhop" ng-show="(searchData.toaDi&amp;&amp;!searchData.toaDi.IsChonChoTuDong)||(searchData.toaVe&amp;&amp;!searchData.toaVe.IsChonChoTuDong)" style="margin-top: 20px; padding: 5px"><div class="et-col-md-12"><div class="et-col-md-4 et-no-padding"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-avaiable"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa còn vé</span></div></div><div class="et-col-md-12 text-center et-no-padding ng-binding" style="margin-top: -20px;display:none">Toa còn vé</div></div></div><div class="et-col-md-3 et-no-padding" style="display:none"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px;"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-full"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa chưa bán</span></div></div><div class="et-col-md-12 et-no-padding text-center ng-binding" style="margin-top: -20px;display:none">Toa chưa bán</div></div></div><div class="et-col-md-4 et-no-padding"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px;"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-selected"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa đang chọn</span></div></div><div class="et-col-md-12 et-no-padding text-center ng-binding" style="margin-top: -20px;display:none">Toa đang chọn</div></div></div><div class="et-col-md-4 et-no-padding"><div class="et-col-md-12"><div class="et-col-md-12" style="padding:0px"><div class="et-col-md-12" style="padding:6px 0px 0px 0px;"><div class="et-car-block" style="height:36px"><div class="et-car-icon et-car-icon-sold-out"><img src="img/trainCar2.png"></div></div><span style="padding-left:6px" class="ng-binding">Toa hết vé</span></div></div><div class="et-col-md-12 text-center et-no-padding ng-binding" style="margin-top: -20px;display:none">Toa hết vé</div></div></div></div><div class="et-col-md-12 table-bordered"></div><div class="et-col-md-12 et-legend" style="padding:0px"><div class="et-col-md-4" style="padding: 0px"><div class="et-col-md-4" style="padding: 0px"><div class="row"><div class="et-car-nm-64-sit et-col-md-6" style="padding-right:0px"><div class="et-col-16 et-sit-side"></div><div class="et-col-64 et-sit-sur-outer"><div class="et-sit-sur text-center"></div></div></div><div class="et-bed-left et-col-md-3 et-no-padding" style="width:30%"><div class="et-bed-outer"><div class="et-bed text-center"></div><div class="et-bed-illu"></div></div></div></div></div><div class="et-col-md-8" style="padding: 0px"><div class="et-legend-label ng-binding" style="margin-left:-6px">Chỗ trống</div></div></div><div class="et-col-md-4" style="padding: 0px"><div class="et-col-md-4" style="padding: 0px"><div class="row"><div class="et-car-nm-64-sit et-col-md-6" style="padding-right:0px"><div class="et-col-16 et-sit-side"></div><div class="et-col-64 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-longer"></div></div></div><div class="et-bed-left et-col-md-3 et-no-padding" style="width:30%"><div class="et-bed-outer"><div class="et-bed text-center et-sit-longer"></div><div class="et-bed-illu"></div></div></div></div></div><div class="et-col-md-8" style="padding: 0px"><div class="et-legend-label ng-binding" style="margin-left:-6px">Chỗ chưa cắt chặng</div></div></div><div class="et-col-md-4" style="padding: 0px"><div class="et-col-md-4" style="padding: 0px"><div class="row"><div class="et-car-nm-64-sit et-col-md-6" style="padding-right:0px"><div class="et-col-16 et-sit-side"></div><div class="et-col-64 et-sit-sur-outer"><div class="et-sit-sur text-center et-sit-blocked"></div></div></div><div class="et-bed-left et-col-md-3 et-no-padding" style="width:30%"><div class="et-bed-outer"><div class="et-bed text-center et-sit-blocked"></div><div class="et-bed-illu"></div></div></div></div></div><div class="et-col-md-8" style="padding: 0px"><div class="et-legend-label ng-binding" style="margin-left:-6px">Chỗ đã bán, không bán</div></div></div></div></div>
                     </div>
-                    <!--<div class="track"></div>
-                      <div class="train"></div>-->
-                    <div class="col-3 cart-section" style="border: 1px solid black;background-color: white;border-radius: 5px;" >
-                        <h4 class="mb-3">Giỏ vé</h4>
-                        <div id="selectedSeats">
-                            <!-- Selected seats will be displayed here -->
-                        </div>
-                        <form id="orderForm" action="processOrder" method="POST" style="display: none;">
-                            <input type="hidden" id="seatInfo" name="seatInfo">
-                            <input type="hidden" id="from_station" name="from_station" value="${depart}">
-                            <input type="hidden" id="to_station" name="to_station" value="${desti}">
-                            <input type="hidden" id="from_date" name="from_date" value="${from_date}">
-                            <button type="submit" class="btn btn-primary w-100" style="margin-top: 15px;">
-                                Đặt vé
-                            </button>
-                        </form>
-                    </div>
-
-
+                                        
                 </div>
+
             </div>
         </div>
     </div>
@@ -567,138 +443,255 @@
 
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
-
-        <!-- Swap data Javascript -->
         <script>
-                            function swapData() {
-                            const isRoundTrip = document.getElementById('roundTrip').checked;
-                            // Get the appropriate input elements based on trip type
-                            const fromStation = isRoundTrip ?
-                                    document.querySelector('#roundTrip-content #from_station') :
-                                    document.querySelector('#oneWay-content #from_station');
-                            const toStation = isRoundTrip ?
-                                    document.querySelector('#roundTrip-content #to_station') :
-                                    document.querySelector('#oneWay-content #to_station');
-                            // Swap the values
-                            if (fromStation && toStation) {
-                            const temp = fromStation.value;
-                            fromStation.value = toStation.value;
-                            toStation.value = temp;
-                            }
-                            }
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-            // Get all train blocks and train heads
-            const trainBlocks = document.querySelectorAll('.et-train-block');
-            const trainHeads = document.querySelectorAll('.et-train-head');
-            // Add click event listener to each train block
-            trainBlocks.forEach(block => {
-            block.addEventListener('click', function(e) {
-            // Remove selected class from all train heads
-            trainHeads.forEach(head => {
-            head.classList.remove('et-train-head-selected');
-            });
-            // Add selected class to the clicked train head
-            const trainHead = this.querySelector('.et-train-head');
-            if (trainHead) {
-            trainHead.classList.add('et-train-head-selected');
-            // Get schedule ID from the clicked train block
-            const trainId = this.getAttribute('data-train-id');
-            if (trainId) {
-            window.location.href = `SearchResult.jsp?trainId=${trainId}`;
-            }
-            }
-            });
-            });
-            // Add click event listener to each train head for direct selection
-            trainHeads.forEach(head => {
-            head.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent event bubbling to train block
+// Form validation
+// Form validation
+                                function validateForm() {
+                                    const fromStationElem = document.getElementById('from_station');
+                                    const toStationElem = document.getElementById('to_station');
+                                    const departDateElem = document.getElementById('datepicker');
+                                    const returnDateElem = document.getElementById('return_datepicker');
+                                    if (!fromStationElem || !toStationElem || !departDateElem) {
+                                        alert('Có lỗi xảy ra: Một số trường không tìm thấy trên trang.');
+                                        return false;
+                                    }
 
-            // Remove selected class from all train heads
-            trainHeads.forEach(h => {
-            h.classList.remove('et-train-head-selected');
-            });
-            // Add selected class to the clicked train head
-            this.classList.add('et-train-head-selected');
-            // Get schedule ID from parent container
-            const trainId = this.closest('.et-train-block').getAttribute('data-train-id');
-            if (trainId) {
-            window.location.href = `SearchResult.jsp?trainId=${trainId}`;
-            }
-            });
-            });
-            // Select the first train head by default and show cabins for it
-            const firstTrainHead = trainHeads[0];
-            if (firstTrainHead) {
-            firstTrainHead.classList.add('et-train-head-selected');
-            const trainId = firstTrainHead.closest('.et-train-block').getAttribute('data-train-id');
-            if (trainId) {
-            window.location.href = `SearchResult.jsp?trainId=${trainId}`;
-            }
-            }
-            });</script>
-    <script>
-        function selectSeat(element, seatNumber, price, trainType, carNumber) {
-        // Get the seat number from the clicked element
-        const seatSpan = element.querySelector('.ng-binding');
-        const actualSeatNumber = seatSpan ? seatSpan.textContent : seatNumber;
-        // Format price with commas
-        const formattedPrice = Number(price).toLocaleString('vi-VN');
-        // Create cart item HTML with dynamic values
-        const cartItem = `
-    <div class="cart-item">
-        <p><strong>Số ghế:</strong> 1</p>
-        <p><strong>Loại tàu:</strong> SE1</p>
-        <p><strong>Toa số:</strong>1</p>
-        <p><strong>Giá:</strong> 1,037,000 VNĐ</p>
-    </div>
-`;
-        // Update cart display
-        const cart = document.getElementById('selectedSeats');
-        if (cart) {
-        cart.innerHTML = cartItem;
-        }
+                                    const fromStation = fromStationElem.value.trim();
+                                    const toStation = toStationElem.value.trim();
+                                    const departDate = departDateElem.value;
+                                    const returnDate = returnDateElem ? returnDateElem.value : '';
+                                    if (!fromStation || !toStation) {
+                                        alert('Vui lòng chọn ga đi và ga đến.');
+                                        return false;
+                                    }
 
-        // Show the order form
-        const orderForm = document.getElementById('orderForm');
-        if (orderForm) {
-        orderForm.style.display = 'block';
-        // Update hidden input with seat information
-        const seatInfo = {
-        seatNumber: actualSeatNumber,
-                trainType: trainType,
-                carNumber: carNumber,
-                price: price
-        };
-        document.getElementById('seatInfo').value = JSON.stringify(seatInfo);
-        }
+                                    if (fromStation === toStation) {
+                                        alert('Ga đi và ga đến không được trùng nhau.');
+                                        return false;
+                                    }
 
-        // Highlight selected seat
-        const allSeats = document.querySelectorAll('.et-car-seat-left');
-        allSeats.forEach(seat => {
-        seat.classList.remove('selected-seat');
-        });
-        element.classList.add('selected-seat');
-        // Store selection in session
-        fetch('UpdateSeatSession', {
-        method: 'POST',
-                headers: {
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(seatInfo)
-        })
-                .then(response => response.json())
-                .then(data => {
-                if (!data.success) {
-                console.error('Failed to update seat session');
-                }
-                })
-                .catch(error => console.error('Error:', error));
-        }
+                                    const today = new Date();
+                                    today.setHours(0, 0, 0, 0);
+                                    const depart = new Date(departDate);
+                                    if (depart < today) {
+                                        alert('Ngày đi không thể là ngày trong quá khứ.');
+                                        return false;
+                                    }
+
+                                    if (returnDate) {
+                                        const returnD = new Date(returnDate);
+                                        if (returnD < depart) {
+                                            alert('Ngày về phải sau ngày đi.');
+                                            return false;
+                                        }
+                                    }
+                                    return true;
+                                }
+                                ;
+
+// Swap station values
+                                function swapData() {
+                                    const fromStationElem = document.getElementById('from_station');
+                                    const toStationElem = document.getElementById('to_station');
+                                    if (fromStationElem && toStationElem) {
+                                        [fromStationElem.value, toStationElem.value] = [toStationElem.value, fromStationElem.value];
+                                    }
+                                }
+                                ;
+
+// Set min date for datepickers
+                                window.onload = function () {
+                                    const today = new Date().toISOString().split('T')[0];
+                                    const departPicker = document.getElementById('datepicker');
+                                    const returnPicker = document.getElementById('return_datepicker');
+                                    if (departPicker)
+                                        departPicker.min = today;
+                                    if (returnPicker)
+                                        returnPicker.min = today;
+                                    if (departPicker && returnPicker) {
+                                        departPicker.addEventListener('change', function () {
+                                            returnPicker.min = this.value;
+                                        });
+                                    }
+                                };
+                                let selectedTrainId = null;
+                                let selectedCabinId = null;
+                                let selectedCabinType = null;
+                                let selectedScheduleId = null;
+                                let selectedSeats = [];
+// Function to select cabin (gọi sau khi đã chọn train)
+                                function selectCabin(cid, ctype, carIcon) {
+                                    if (!ctype || !carIcon)
+                                        return;
+                                    selectedCabinId = cid; // Lưu cabinId đã chọn
+                                    selectedCabinType = ctype; // Lưu cabinType đã chọn
+
+                                    // Xóa selected class từ tất cả các cabin icons
+                                    document.querySelectorAll('.et-car-block .caIcon.et-car-icon').forEach(icon => {
+                                        icon.classList.remove('et-car-icon-selected');
+                                    });
+
+                                    // Thêm selected class vào cabin được chọn
+                                    carIcon.classList.add('et-car-icon-selected');
+
+                                    const totalSeats = ctype.replace(/^(A|B)n?(\d{2})L(V)?$/, "$2");
+                                    let seatsInRow; // Khai báo biến trước
+
+                                    if (!ctype.includes("n")) {
+                                        seatsInRow = ctype.includes("A") ? 4 : (ctype.includes("B") ? 6 : 0);
+                                    }
+                                    let berthsInRoom; // Khai báo biến trước
+
+                                    if (ctype.includes("n")) {
+                                        berthsInRoom = ctype.includes("A") ? 4 : (ctype.includes("B") ? 6 : 0);
+                                    }
+
+                                    const cabinNumber = cid.split("/")[1];
+                                    console.log("ctype: "+ctype);
+
+                                    // Xác định layout cần tải dựa vào loại cabin
+                                    const regex = /^(A|B)n\d{2}L(V)?$/;
+                                    let layoutFile = regex.test(ctype) ? "cabin_layout/Berths.jsp?cbid=" + cid + "&total=" + totalSeats + "&room=" + berthsInRoom + "&cabinNumber=" + cabinNumber + "&ctype=" + ctype + "&sid=" + selectedScheduleId : "cabin_layout/Seats.jsp?cbid=" + cid + "&total=" + totalSeats + "&row=" + seatsInRow + "&cabinNumber=" + cabinNumber + "&ctype=" + ctype + "&sid=" + selectedScheduleId;
+                                    console.log("scheduleid: ", selectedScheduleId);
+                                    fetch(layoutFile)
+                                            .then(response => response.text())
+                                            .then(data => {
+                                                const showCabinDiv = document.querySelector(".showCabin");
+                                                if (showCabinDiv) {
+                                                    showCabinDiv.innerHTML = data; // Chèn nội dung từ JSP vào div
+                                                } else {
+                                                    console.error("Không tìm thấy phần tử div có class 'showCabin'");
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error(`Lỗi khi fetch ${layoutFile}:`, error);
+                                            });
+                                }
+
+// 🟢 Function chọn train và cập nhật cabin khả dụng
+                                function selectTrain(trainId, trainHead, isInitialLoad = false) {
+                                    if (!trainId || !trainHead)
+                                        return;
+                                    selectedTrainId = trainId; // Lưu trainId đã chọn
+                                    console.log(selectedTrainId);
+                                    // Cập nhật trạng thái chọn tàu
+                                    document.querySelectorAll('.et-train-head').forEach(h => h.classList.remove('et-train-head-selected'));
+                                    trainHead.classList.add('et-train-head-selected');
+
+                                    // Ẩn tất cả cabin
+                                    document.querySelectorAll('.col-md-12.et-no-margin').forEach(container => {
+                                        container.style.display = 'none';
+                                    });
+
+                                    // Hiển thị cabin của train được chọn
+                                    const selectedCabinContainer = document.getElementById(`cabin-container-` + trainId);
+
+                                    if (selectedCabinContainer) {
+                                        selectedCabinContainer.style.display = 'block';
+                                    } else {
+                                        console.error(`Không tìm thấy cabin-container-${trainId}`);
+                                }
+                                }
+// 🟢 Function chọn ghế
+                                function selectSeat(seatElement) {
+                                    const seatNumber = seatElement.getAttribute("data-seat-number"); // Lấy số ghế
+                                    const price = seatElement.getAttribute("data-seat-price") || "Không có giá"; // Lấy giá ghế
+                                    const seatSurElement = seatElement.querySelector(".et-sit-sur"); // Tìm class "et-sit-sur"
+
+                                    const depart = "<%= request.getAttribute("depart")%>";
+                                    const desti = "<%= request.getAttribute("desti")%>";
+                                    const fromTime = "<%= request.getAttribute("from_date")%>";
+
+
+                                    if (!seatSurElement) {
+                                        console.warn("⚠ Không tìm thấy .et-sit-sur trong seatElement");
+                                        return;
+                                    }
+
+                                    // 🟢 Xác định loại ghế dựa vào `selectedCabinType`
+                                    let seatType = selectedCabinType && selectedCabinType.includes("n") ? "Giường nằm" : "Ngồi mềm";
+
+                                    // 🟢 Tìm giỏ vé
+                                    const cart = document.getElementById("cartItems");
+                                    const button = document.getElementById("card-footer");
+                                    if (!cart) {
+                                        console.error("❌ Không tìm thấy phần tử Giỏ vé");
+                                        return;
+                                    }
+
+                                    // 🟢 Kiểm tra xem ghế đã được chọn chưa
+                                    let existingSeat = document.querySelector(`#cartItems div[data-seat-number='` + seatNumber + `']`);
+                                    if (existingSeat) {
+                                        // Nếu đã chọn, click lại sẽ bỏ chọn ghế
+                                        existingSeat.remove();
+                                        seatSurElement.classList.remove("et-sit-buying"); // Bỏ hiệu ứng chọn
+                                    } else {
+                                        // 🟢 Thêm ghế vào giỏ vé
+                                        let seatInfo = document.createElement("div");
+                                        seatInfo.classList.add("cart-item");
+                                        seatInfo.setAttribute("data-seat-number", seatNumber);
+                                        seatInfo.innerHTML = `
+        <p>` + selectedTrainId + `: ` + depart + ` - ` + desti + `</p> 
+            <p> ` + seatType + ` - Toa ` + selectedCabinId + ` - Chỗ ` + seatNumber + ` </p>
+            <p> ` + fromTime + ` </p>        
+            <p> ` + price + ` VNĐ</p>
+        `;
+                                        cart.appendChild(seatInfo);
+                                        seatSurElement.classList.add("et-sit-buying");
+                                        selectedSeats.push({ seatNumber, selectedCabinId,seatType,selectedTrainId, price});
+                                         document.getElementById("selectedSeatsInput").value = JSON.stringify(selectedSeats);
+                                         console.log("🛒 Ghế đã chọn:", JSON.stringify(selectedSeats));
+                                         button.style.display='block';
+                                         
+                                    }
+                                }
+
+// 🟢 Lắng nghe sự kiện click trên trainHead & cập nhật danh sách cabin
+
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    // 🟢 Click vào Train Head → Chọn tàu
+                                    document.body.addEventListener('click', function (event) {
+                                        let trainHead = event.target.closest('.et-train-head');
+                                        if (trainHead) {
+                                            selectTrain(trainHead.getAttribute('data-train-id'), trainHead);
+                                        }
+                                    });
+
+                                    // 🟢 Click vào Cabin → Chọn Cabin & Hiển thị ghế
+                                    document.body.addEventListener('click', function (event) {
+                                        let carIcon = event.target.closest('.et-car-icon');
+                                        if (carIcon) {
+                                            let cabinType = carIcon.getAttribute("data-cabin-type");
+                                            let cabinId = carIcon.getAttribute("data-cabin-id");
+                                            let scheduleId = carIcon.getAttribute("data-schedule-id");
+
+                                            if (scheduleId) {
+                                                selectedScheduleId = scheduleId;
+                                            }
+                                            selectCabin(cabinId, cabinType, carIcon);
+                                        }
+                                    });
+
+                                    // 🟢 Click vào Ghế → Gọi `selectSeat()`
+                                    document.body.addEventListener('click', function (event) {
+                                        let seat = event.target.closest('.et-car-nm-64-sit, .et-col-1-16.et-seat-h-35');
+                                        if (seat) {
+                                            let seatNumber = seat.getAttribute("data-seat-number");
+                                            if (!seatNumber) {
+                                                console.warn("⚠ Không tìm thấy số ghế (data-seat-number)");
+                                                return;
+                                            }
+                                            selectSeat(seat);
+                                            console.log("💺 Ghế được chọn:", seatNumber);
+                                        }
+                                    });
+                                });
     </script>
-    <input type="hidden" id="selectedTrainId" name="trainId" value="">
 
-    ```
-    ```
+
+
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+
+</html>  

@@ -5569,7 +5569,7 @@ body,html {
 }
 
 .et-no-margin {
-    margin: 0 10px 0 6px!important;
+    margin: 0 10px 0 0px!important;
     width: 95%
 }
 
@@ -6227,24 +6227,24 @@ select {
     height: 130%
 }
 
-.et-car-icon-avaiable {
-    background-color: #80b5d6
+.caIcon.et-car-icon.et-car-icon-avaiable {
+    background-color: #80b5d6 !important;
 }
 
 .et-car-icon-full {
-    background-color: #ccc
+    background-color: #ccc;
 }
 
 .et-car-icon-sold-out {
-    background-color: #df5327
+    background-color: #df5327;
 }
 
 .et-car-icon-selected {
-    background-color: #a6b727
+    background-color: #a6b727;
 }
 
-.et-car-icon-khac {
-    background-color: #5da7d5
+.et-car-icon-other {
+    background-color: #5da7d5;
 }
 
 .et-car-icon-avaiable:hover {
@@ -7028,7 +7028,7 @@ select {
     width: 130px;
     height: 130px;
     border-radius: 20px;
-    background-color: #999;
+    background-color: #ad917f;
     padding: 0 5px;
     position: absolute;
     z-index: 99
@@ -7172,6 +7172,9 @@ select {
     margin-top: -25px
 }
 
+.caIcon.et-car-icon.et-car-icon-selected {
+    background-color: #a6b727
+}
 .et-car-table-half-top {
     padding: 20px 5px 0;
     height: 35px;
@@ -8069,7 +8072,7 @@ table th {
     }
 
     .et-col-5 {
-        width: 5%!important
+        width: 4%!important
     }
 
     .et-col-90 {
@@ -8079,7 +8082,7 @@ table th {
 
 @media (min-width: 1200px) {
     .et-col-5 {
-        width:5%!important
+        width:4%!important
     }
 
     .et-col-90 {

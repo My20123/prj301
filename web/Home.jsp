@@ -133,6 +133,7 @@
                                                                         <input type="radio" class="radio-input" name="options" readonly="" tabindex="0" value="roundTrip" id="roundTrip" onchange="handleTripTypeChange()">
                                                                         <div class="radio-button__text">Khứ hồi</div>
                                                                     </label>
+                                                                    <input type="hidden" id="trip_type" name="trip_type" value="">
                                                                 </div>
                                                                 <div id="oneWay-content" class="content">
                                                                     <div class="train-search__data">
@@ -212,7 +213,7 @@
                                                                                             <div class="react-select__placeholder css-1jqq78o-placeholder" id="react-select-2-placeholder" style="margin-left: 25px;">Ga đi</div>
                                                                                             <div class="search-station-input-wrapper">
                                                                                                 <div class="react-select__input-container css-19bb58m" data-value="">
-                                                                                                 <input class="react-select__input" name="from_station" list="stations" autocapitalize="none" autocomplete="off" autocorrect="off" id="from_station_round" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-2-placeholder" style="color: inherit; background: 0px center; opacity: 1;  width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
+                                                                                                 <input class="react-select__input" name="from_station" list="stations" id="from_station_round" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" role="combobox" aria-describedby="react-select-2-placeholder" style="color: inherit; background: 0px center; opacity: 1;  width: 250px; grid-area: 1 / 2; font: inherit; min-width: 2px; border: 0px; margin: 0px;margin-left:40px; outline: 0px; padding: 0px;">
                                                                                                 <datalist id="stations">
                                                                                                     <c:forEach items="${listS}" var="o">
                                                                                                         <option value="${o}">

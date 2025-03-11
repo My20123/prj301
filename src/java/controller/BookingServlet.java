@@ -1,6 +1,8 @@
 package controller;
 
 import dal.DAO;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,10 +17,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import model.Accounts;
-import model.Order_Details;
-import model.Schedules;
-import model.Tickets;
+import model.*;
+
 
 @WebServlet(name = "BookingServlet", urlPatterns = {"/processOrder"})
 public class BookingServlet extends HttpServlet {
@@ -39,7 +39,7 @@ public class BookingServlet extends HttpServlet {
             String fromStation = request.getParameter("from_station");
             String toStation = request.getParameter("to_station");
             String fromDate = request.getParameter("from_date");
-            
+            String seats=request.getParameter("selectedSeats");           
             
             
             // Store these values back in session for persistence
@@ -52,7 +52,12 @@ public class BookingServlet extends HttpServlet {
             Date date=Date.from(instant);
             Order_Details order = new Order_Details(2, 2, 5, 1, 1037000, 1,date );
            
-            
+             Gson gson = new Gson();
+        List<Object> selectedSeats = gson.fromJson(seats, new TypeToken<List<Object>>() {}.getType());
+
+request.setAttribute("selectedSeats", selectedSeats);
+
+
             dao.createOrder(order);
             // Set the order object for JSP
             request.setAttribute("order", order);

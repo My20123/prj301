@@ -53,7 +53,7 @@ public class SearchTrainServlet extends HttpServlet {
             request.setAttribute("listS", listS);
             
             // Get form parameters
-            String tripType = request.getParameter("trip_type");
+            String tripType = request.getParameter("options");
             String fromStation = request.getParameter("from_station");
             String toStation = request.getParameter("to_station");
             String fromDate = request.getParameter("input_from");
@@ -66,14 +66,6 @@ public class SearchTrainServlet extends HttpServlet {
             request.setAttribute("from_date", fromDate);
             request.setAttribute("return_date", returnDate);
             
-            // Validate input
-            if (fromStation == null || toStation == null || fromDate == null || 
-                fromStation.trim().isEmpty() || toStation.trim().isEmpty() || fromDate.trim().isEmpty() ||
-                ("roundTrip".equals(tripType) && (returnDate == null || returnDate.trim().isEmpty()))) {
-                request.setAttribute("error", "Please fill in all required fields");
-                request.getRequestDispatcher("SearchResult.jsp").forward(request, response);
-                return;
-            }
             
             // Parse dates
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -84,30 +76,34 @@ public class SearchTrainServlet extends HttpServlet {
             }
             
             // Search for departure routes and schedules
-            List<Routes> departRoutes = dao.searchRoute(fromStation, toStation);
-            List<Schedules> departSchedules = dao.searchSchedules(departRoutes, departDate);
-            
+            List<Schedule> departSchedules = dao.searchSchedules(fromStation, toStation, departDate);
+            if(departSchedules==null||departSchedules.isEmpty()){
+                request.setAttribute("errorMessage", "Không tìm thấy chuyến tàu nào cho tuyến đường này.");
+                request.getRequestDispatcher("Home.jsp").forward(request, response);
+            }
+                        
             // Set departure schedules attribute
             request.setAttribute("departSchedules", departSchedules);
             
-            // If round trip, search for return routes and schedules
+            
+//            // If round trip, search for return routes and schedules
             if ("roundTrip".equals(tripType) && returnDateObj != null) {
-                List<Routes> returnRoutes = dao.searchRoute(toStation, fromStation);
-                List<Schedules> returnSchedules = dao.searchSchedules(returnRoutes, returnDateObj);
+                List<Schedule> returnSchedules = dao.searchSchedules(toStation, fromStation, sdf.parse(returnDate));
                 
                
                 // Set return schedules attribute
                 request.setAttribute("return_schedules", returnSchedules);
             }
             
-            // Forward to search result page
+            // Forward to search result page         
             request.getRequestDispatcher("SearchResult.jsp").forward(request, response);
             
         } catch (ParseException e) {
             LOGGER.log(Level.SEVERE, "Error parsing date", e);
             request.setAttribute("error", "Invalid date format");
             request.getRequestDispatcher("SearchResult.jsp").forward(request, response);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error processing search request", e);
             request.setAttribute("error", "An error occurred while processing your request");
             request.getRequestDispatcher("SearchResult.jsp").forward(request, response);
@@ -152,15 +148,7 @@ public class SearchTrainServlet extends HttpServlet {
             request.setAttribute("from_date", fromDate);
             request.setAttribute("return_date", returnDate);
             
-            // Validate input
-            if (fromStation == null || toStation == null || fromDate == null || 
-                fromStation.trim().isEmpty() || toStation.trim().isEmpty() || fromDate.trim().isEmpty() ||
-                ("roundTrip".equals(tripType) && (returnDate == null || returnDate.trim().isEmpty()))) {
-                request.setAttribute("error", "Please fill in all required fields");
-                request.getRequestDispatcher("SearchResult.jsp").forward(request, response);
-                return;
-            }
-            
+                      
             // Parse dates
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date departDate = sdf.parse(fromDate);
@@ -170,18 +158,15 @@ public class SearchTrainServlet extends HttpServlet {
             }
             
             // Search for departure routes and schedules
-            List<Routes> departRoutes = dao.searchRoute(fromStation, toStation);
-            List<Schedules> departSchedules = dao.searchSchedules(departRoutes, departDate);
+            List<Schedule> departSchedules = dao.searchSchedules(fromStation, toStation, departDate);
             
             // Set departure schedules attribute
             request.setAttribute("departSchedules", departSchedules);
-            
+                        
             // If round trip, search for return routes and schedules
             if ("roundTrip".equals(tripType) && returnDateObj != null) {
-                List<Routes> returnRoutes = dao.searchRoute(toStation, fromStation);
-                List<Schedules> returnSchedules = dao.searchSchedules(returnRoutes, returnDateObj);
+                List<Schedule> returnSchedules = dao.searchSchedules(toStation, fromStation, sdf.parse(returnDate));
                 
-               
                 // Set return schedules attribute
                 request.setAttribute("return_schedules", returnSchedules);
             }

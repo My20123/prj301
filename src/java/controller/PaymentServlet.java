@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Schedules;
+import model.Schedule;
 import model.Cabins;
 import model.Accounts;
 import java.net.URLEncoder;

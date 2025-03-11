@@ -72,9 +72,31 @@
             border-radius: 25px;
             font-weight: 600;
         }
-        .train-info i {
-            color: #06A3DA;
-            margin-right: 8px;
+        .delete-btn {
+            color: #dc3545;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .delete-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        .passenger-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .passenger-info input {
+            padding: 4px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .passenger-info label {
+            margin-bottom: 0;
+            min-width: 60px;
         }
     </style>
 </head>
@@ -114,21 +136,14 @@
             <div class="order-body">
                 <c:if test="${not empty order}">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="info-section">
                                 <h5 class="mb-4"><i class="fas fa-user me-2"></i>Thông Tin Đặt Vé</h5>
-                                <p><strong><i class="fas fa-hashtag"></i> Mã Vé:</strong> 552</p>
+                                <p><strong><i class="fas fa-hashtag"></i> Mã Vé:</strong> 522</p>
                                 <p><strong><i class="fas fa-user-circle"></i> Tên Khách Hàng:</strong> My</p>
-                                <p><strong><i class="far fa-calendar-alt"></i> Ngày Đặt:</strong> someday</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-section train-info">
-                                <h5 class="mb-4"><i class="fas fa-train me-2"></i>Thông Tin Chuyến Tàu</h5>
-                                <p><i class="fas fa-subway"></i><strong>Tàu:</strong> Se1</p>
-                                <p><i class="fas fa-map-marker-alt"></i><strong>Ga Đi:</strong> ${depart}</p>
-                                <p><i class="fas fa-map-marker"></i><strong>Ga Đến:</strong> ${desti}</p>
-                                <p><i class="far fa-clock"></i><strong>Giờ Khởi Hành:</strong> ${from_date}</p>
+                                <p><strong><i class="fas fa-id-card"></i> CCCD:</strong> 0889</p>
+                                <p><strong><i class="far fa-envelope"></i> Email:</strong> email</p>
+                                <p><strong><i class="fas fa-phone"></i> Số Điện Thoại:</strong> 09xxx</p>
                             </div>
                         </div>
                     </div>
@@ -139,24 +154,47 @@
                             <table class="table table-striped mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Số Ghế</th>
-                                        <th>Hạng Ghế</th>
+                                        <th>Họ Tên</th>
+                                        <th>Thông Tin Chỗ</th>
                                         <th>Giá Vé</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>1,037,000 VNĐ</td>
-                                    </tr>
+                                    <c:forEach items="${selectedSeats}" var="seat">
+                                        <c:set var="totalPrice" value="${totalPrice + seatMap['price']}" />
+                                        <tr>
+                                            <td>
+                                                <div class="passenger-info">
+                                                    <label>Họ tên:</label>
+                                                    <input type="text">
+                                                </div>
+                                                <div class="passenger-info">
+                                                    <label>CCCD:</label>
+                                                    <input type="text">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>Ghế: </strong>${seat["seatNumber"]} ${seat["seatType"]}<br>
+                                                <strong>Tàu: </strong> ${seat["selectedTrainId"]}<br>
+                                                <strong>Cabin: </strong>${seat["selectedCabinId"]}<br>
+                                                <strong>Khởi hành:</strong>${from_date}
+                                            </td>
+                                            <td>${seat["price"]} VNĐ</td>
+                                            <td>
+                                                <a href="javascript:void(0)" onclick="deleteTicket(this)" class="delete-btn">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                   </c:forEach>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     
                     <div class="mt-4 text-end">
-                        <h5 class="total-amount">Tổng Tiền: 1,037,000 VNĐ</h5>
+                        <h5 class="total-amount">Tổng Tiền: ${totalPrice} VNĐ</h5>
                     </div>
                     
                     <div class="action-buttons">
@@ -195,5 +233,27 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+        function deleteTicket(element) {
+            if (confirm('Bạn có chắc chắn muốn xóa vé này không?')) {
+                const row = element.closest('tr');
+                row.remove();
+                updateTotalPrice();
+            }
+        }
+
+        function updateTotalPrice() {
+            // Implement total price recalculation logic here
+            // This is a placeholder - you'll need to implement the actual calculation
+            const rows = document.querySelectorAll('tbody tr');
+            let total = 0;
+            rows.forEach(row => {
+                const priceText = row.querySelector('td:nth-child(3)').textContent;
+                const price = parseInt(priceText.replace(/[^\d]/g, ''));
+                total += price;
+            });
+            document.querySelector('.total-amount').textContent = `Tổng Tiền: ${total.toLocaleString('vi-VN')} VNĐ`;
+        }
+    </script>
 </body>
 </html>

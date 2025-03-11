@@ -28,7 +28,6 @@
         <servlet-class>controller.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
-
         <servlet-name>BookingServlet</servlet-name>
         <servlet-class>controller.BookingServlet</servlet-class>
     </servlet>
@@ -59,7 +58,6 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/processOrder</url-pattern>
     </servlet-mapping>
