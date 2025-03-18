@@ -129,7 +129,6 @@ CREATE TABLE Order_details (
 
 USE prj_train;
 -- Insert into the Accounts table
-<<<<<<< HEAD
 INSERT INTO Accounts ( uname, umail, pass, uphone , isStaff, isAdmin, cccd) VALUES ( 'Admin','admin1@gmail.com', '123456', '0912525769', 0,1,0),
 ('Trình', 'trinh@gmail.com', '123456', '0384572193', 1, 0,0),
 ('Long', 'long@gmail.com', '123456', '12345678',0, 1,0),

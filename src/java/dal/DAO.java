@@ -17,16 +17,20 @@ import model.Accounts;
 import model.Order_details;
 import model.Orders;
 
-/**
- *
- * @author trinh
- */
-public class DAO {
 
+public class DAO {
+    private DBContext dbContext;
     Connection con = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
 
+    public DAO() {
+        this.dbContext = new DBContext();
+    }
+    public DAO(DBContext dbContext) {
+        this.dbContext = dbContext;
+    }
+    
     public List<Products> getAllProducts() {
         List<Products> list = new ArrayList<>();
         String query = "select * from products";
@@ -147,7 +151,19 @@ public class DAO {
         }
         return list;
     }
-
+    public boolean addCategory(Categories category) {
+    String query = "INSERT INTO Categories (cid, cname) VALUES (?, ?)";
+    try {
+        con = new DBContext().getConnection(); // Mở kết nối với SQL
+        ps = con.prepareStatement(query);
+        ps.setInt(1, category.getCid());      // Truyền ID danh mục
+        ps.setString(2, category.getCname()); // Truyền tên danh mục
+        ps.executeUpdate(); 
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
     public Products getLast() {
         String query = "select top 1 * from products\n"
                 + "order by id desc";
