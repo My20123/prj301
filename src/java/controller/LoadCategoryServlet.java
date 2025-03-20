@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
 
@@ -17,9 +16,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-@WebServlet(name = "LoadServlet", urlPatterns = {"/load"})
-public class LoadServlet extends HttpServlet {
+/**
+ *
+ * @author tra my
+ */
+public class LoadCategoryServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,14 +34,12 @@ public class LoadServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String id = request.getParameter("pid");
+        String id = request.getParameter("cid");
         DAO dao = new DAO();
-        Products p = dao.getAllProductsByID(id);
-        List<Categories> listC = dao.getAllCategories();
+        Categories c = dao.searchCategoryByID(id);
 
-        request.setAttribute("detail", p);
-        request.setAttribute("listCC", listC);
-        request.getRequestDispatcher("Edit.jsp").forward(request, response);
+        request.setAttribute("category", c);
+        request.getRequestDispatcher("EditCategory.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
