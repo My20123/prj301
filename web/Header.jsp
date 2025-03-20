@@ -110,6 +110,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="managerproduct">Manager Product</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="managecategory">Manager Category</a>
+                                    </li>
                                 </c:if>
                             </ul>
                         </div>

@@ -1,122 +1,376 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit4TestClass.java to edit this template
- */
 package dal;
 
-import java.util.List;
-import java.sql.*;
 import model.Products;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.sql.*;
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-/**
- *
- * @author tra my
- */
+@RunWith(MockitoJUnitRunner.class)
 public class ProductDAOTest {
-    
-    private ProductDAO productDAO;
-    
-    public ProductDAOTest() {
-    }
-    
+
     @Mock
-    private Connection mockConnection;
+    private DBContext dbContext;
+
     @Mock
-    private PreparedStatement mockPreparedStatement;
+    private Connection connection;
+
     @Mock
-    private ResultSet mockResultSet;
-   
+    private PreparedStatement preparedStatement;
+
+    @Mock
+    private ResultSet resultSet;
+
+    private ProductDAO productDAO; // Không dùng @InjectMocks vì cần truyền mock vào constructor
+
     @Before
-    public void setUp() throws SQLException {
-        MockitoAnnotations.openMocks(this);
-        productDAO= new ProductDAO();
-        
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-        when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
+    public void setUp() throws SQLException, Exception {
+        // Giả lập hành vi của DBContext
+        when(dbContext.getConnection()).thenReturn(connection);
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+        productDAO = new ProductDAO(dbContext); // Inject mock DBContext vào ProductDAO
     }
-    
+//_____________________ Test Get Product by CategoryID _____________________________
+    @Test
+    public void getAllProductsByCategories_ValidCategoryId_ReturnsListOfProducts() throws SQLException, Exception {
+        int categoryId = 1;
 
-   @Test
-public void testGetAllProductsByCategories_Success() throws Exception {
-    // Giả lập dữ liệu trả về từ ResultSet
-    when(mockResultSet.next()).thenReturn(true, true, true, true, true, false); // 5 sản phẩm
-    when(mockResultSet.getInt(1)).thenReturn(1, 2, 3, 4, 5);
-    when(mockResultSet.getString(2)).thenReturn(
-        "Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương",
-        "Giày Thể Thao Nam Adidas Ultraboost 1.0 - Đen",
-        "Giày Chạy Bộ Nam Adidas Supernova Stride - Xanh Dương",
-        "Giày Tập Luyện Nữ Adidas Dropset 3 Trainer - Be",
-        "Giày Sneaker Nữ Adidas Grand Court 2.0 - Hồng"
-    );
-    when(mockResultSet.getString(3)).thenReturn(
-        "https://supersports.com.vn/cdn/shop/files/ID3595-1.jpg?v=1726651554&width=1000",
-        "https://supersports.com.vn/cdn/shop/files/HQ4199-1.jpg?v=1717755517&width=1000",
-        "https://supersports.com.vn/cdn/shop/files/IG8311-1.jpg?v=1706783520&width=1000",
-        "https://supersports.com.vn/cdn/shop/files/ID8635-1.jpg?v=1717755617&width=1000",
-        "https://supersports.com.vn/cdn/shop/files/ID3004-1.jpg?v=1716869851&width=1000"
-    );
-    when(mockResultSet.getDouble(4)).thenReturn(3800000.0, 3600000.0, 2240000.0, 3150000.0, 1400000.0);
-    when(mockResultSet.getString(5)).thenReturn(
-        "GIÀY CHẠY BỘ NỮ ADIDAS SUPERNOVA RISE",
-        "GIÀY THỂ THAO NAM ADIDAS ULTRABOOST 1.0",
-        "GIÀY CHẠY BỘ NAM ADIDAS SUPERNOVA STRIDE",
-        "GIÀY TẬP LUYỆN NỮ ADIDAS DROPSET 3 TRAINER",
-        "GIÀY SNEAKER NỮ ADIDAS GRAND COURT 2.0"
-    );
-    when(mockResultSet.getString(6)).thenReturn(
-        "Được Womens Health trao giải thưởng đôi giày chạy bộ...",
-        "Khi đi dạo trong công viên cũng như chạy bộ cuối tuần...",
-        "Đôi giày chạy bộ nam Adidas Supernova Stride chính là...",
-        "Bất kể buổi tập của bạn đòi hỏi sức mạnh hay sức bền...",
-        "Nhẹ nhàng lướt qua những ngày dài bận rộn..."
-    );
+        // Giả lập dữ liệu ResultSet
+        when(resultSet.next()).thenReturn(true, true,true,true,true, false); // Simulate 2 products
+        when(resultSet.getInt(1)).thenReturn(16, 17,18,19,20);
+        when(resultSet.getString(2)).thenReturn("Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương", "Giày Thể Thao Nam Adidas Ultraboost 1.0 - Đen","Giày Chạy Bộ Nam Adidas Supernova Stride - Xanh Dương","Giày Tập Luyện Nữ Adidas Dropset 3 Trainer - Be","Giày Sneaker Nữ Adidas Grand Court 2.0 - Hồng");
+        when(resultSet.getDouble(4)).thenReturn(3800000.00, 3600000.00,2240000.00,3150000.00,1400000.00);
 
-    // Gọi phương thức cần test
-    List<Products> result = productDAO.getAllProductsByCategories("1");
 
-    // Kiểm tra kết quả
-    assertNotNull(result);
-    assertEquals(5, result.size());
+        // Gọi hàm
+        List<Products> products = productDAO.getAllProductsByCategories(categoryId);
 
-    // Kiểm tra sản phẩm đầu tiên
-    assertEquals(16, result.get(0).getId());
-    assertEquals("Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương", result.get(0).getName());
-    assertEquals(3800000.0, result.get(0).getPrice(), 0.01);
+        // Kiểm tra kết quả
+        assertNotNull(products);
+        assertEquals(5, products.size());
+        assertEquals(16, products.get(0).getId());
+        assertEquals("Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương", products.get(0).getName());
 
-    // Kiểm tra sản phẩm cuối cùng
-    assertEquals(20, result.get(4).getId());
-    assertEquals("Giày Sneaker Nữ Adidas Grand Court 2.0 - Hồng", result.get(4).getName());
-    assertEquals(1400000.0, result.get(4).getPrice(), 0.01);
-}
+        assertEquals(20, products.get(4).getId());
+        assertEquals("Giày Sneaker Nữ Adidas Grand Court 2.0 - Hồng", products.get(4).getName());
+
+        verify(preparedStatement).setInt(1, categoryId);
+        verify(preparedStatement).executeQuery();
+    }
+
+    @Test
+    public void getAllProductsByCategories_BelowMin_ReturnsEmptyList() throws SQLException, Exception {
+        int categoryId=0;
+        when(resultSet.next()).thenReturn(false); 
+
+        List<Products> products = productDAO.getAllProductsByCategories(categoryId);
+
+        assertNotNull(products);
+        assertTrue(products.isEmpty());
+
+        verify(preparedStatement).setInt(1, categoryId);
+        verify(preparedStatement).executeQuery();
+    }
 
     
     @Test
-    public void testGetAllProductsByCategories_EmptyResult() throws Exception {
-        // Giả lập ResultSet không có dữ liệu
-        when(mockResultSet.next()).thenReturn(false);
+    public void getAllProductsByCategories_NegativeCategoryId_ThrowsIllegalArgumentException() {
+        int categoryId = -1;
 
-        List<Products> result = productDAO.getAllProductsByCategories("999");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            productDAO.getAllProductsByCategories(categoryId);
+        });
 
-        assertNotNull(result);
-        assertEquals(0, result.size());
+        assertEquals("Category ID phải là số nguyên dương", exception.getMessage());
+    }
+
+    public void getAllProductsByCategories_MaxCategoryId_ReturnsListOfProducts() throws SQLException, Exception {
+        int categoryId = 7;
+
+        // Giả lập dữ liệu ResultSet
+        when(resultSet.next()).thenReturn(true, true,true,true,true, false); // Simulate 2 products
+        when(resultSet.getInt(1)).thenReturn(16, 17,18,19,20);
+        when(resultSet.getString(2)).thenReturn("Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương", "Giày Thể Thao Nam Adidas Ultraboost 1.0 - Đen","Giày Chạy Bộ Nam Adidas Supernova Stride - Xanh Dương","Giày Tập Luyện Nữ Adidas Dropset 3 Trainer - Be","Giày Sneaker Nữ Adidas Grand Court 2.0 - Hồng");
+        when(resultSet.getDouble(4)).thenReturn(3800000.00, 3600000.00,2240000.00,3150000.00,1400000.00);
+
+
+        // Gọi hàm
+        List<Products> products = productDAO.getAllProductsByCategories(categoryId);
+
+        // Kiểm tra kết quả
+        assertNotNull(products);
+        assertEquals(5, products.size());
+        assertEquals(16, products.get(0).getId());
+        assertEquals("Giày Chạy Bộ Nữ Adidas Supernova Rise - Xanh Dương", products.get(0).getName());
+
+        assertEquals(20, products.get(4).getId());
+        assertEquals("Giày Sneaker Nữ Adidas Grand Court 2.0 - Hồng", products.get(4).getName());
+
+        verify(preparedStatement).setInt(1, categoryId);
+        verify(preparedStatement).executeQuery();
+    }
+   
+    @Test
+public void getAllProductsByCategories_AboveMax_ReturnsEmptyList() throws SQLException, Exception {
+    int categoryId = 8; 
+
+    when(resultSet.next()).thenReturn(false);
+
+    List<Products> products = productDAO.getAllProductsByCategories(categoryId);
+
+    assertNotNull(products);
+    assertTrue(products.isEmpty());
+
+    verify(preparedStatement).setInt(1, categoryId);
+    verify(preparedStatement).executeQuery();
+}
+
+//_____________________ Test Delete _____________________________
+  @Test
+    public void deleteProduct_ValidId_Success() throws SQLException {
+        int validProductId = 1;
+
+        // Gọi hàm cần test
+        productDAO.deleteProduct(validProductId);
+
+        // Kiểm tra xem phương thức setInt() và executeUpdate() có được gọi không
+        verify(preparedStatement).setInt(1, validProductId);
+        verify(preparedStatement).executeUpdate();
     }
     
+@Test
+    public void deleteProduct_NegativeId_ThrowsException() {
+        int negativeProductId = -5;
 
+        try {
+            productDAO.deleteProduct(negativeProductId);
+            fail("Expected IllegalArgumentException but none was thrown");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Product ID phải là số nguyên dương", e.getMessage());
+        }
+    }
+    
+   @Test
+    public void deleteProduct_ZeroId_NoEffect() throws SQLException {
+        int zeroProductId = 0;
+        when(preparedStatement.executeUpdate()).thenReturn(0);
 
-@Test(expected = IllegalArgumentException.class)
-public void testGetAllProductsByCategories_NullValue() throws Exception {
-    productDAO.getAllProductsByCategories(null);
-}
+        productDAO.deleteProduct(zeroProductId);
 
-@Test(expected = IllegalArgumentException.class)
-public void testGetAllProductsByCategories_NonNumericId() throws Exception {
-    productDAO.getAllProductsByCategories("abc@");
-}
+        verify(preparedStatement).setInt(1, zeroProductId);
+        verify(preparedStatement).executeUpdate();
+    }
+    
+        @Test
+    public void deleteProduct_MaxId_Success() throws SQLException {
+        int maxProductId = 60;
 
+        productDAO.deleteProduct(maxProductId);
+
+        verify(preparedStatement).setInt(1, maxProductId);
+        verify(preparedStatement).executeUpdate();
+    }
+    @Test
+    public void deleteProduct_AboveMax_NoEffect() throws SQLException {
+        int aboveMaxProductId = 61;
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+
+        productDAO.deleteProduct(aboveMaxProductId);
+
+        verify(preparedStatement).setInt(1, aboveMaxProductId);
+        verify(preparedStatement).executeUpdate();
+    }
+    //_____________________ Test Insert _____________________________
+    @Test
+    public void insertProduct_NegativeNumber_ThrowsIllegalArgumentException(){
+        double price = -1;
+        int category=-2,sid=-3;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            productDAO.insertProduct(name, image, price, title, description, category, sid);
+        });
+
+        assertEquals("Số phải là số nguyên dương", exception.getMessage());
+    }
+    
+    @Test
+    public void insertProduct_EmptyOrNullString_ThrowsIllegalArgumentException(){
+        double price = 0;
+        int category=1,sid=1;
+        
+        String name=null, image="",title="" ,description=null;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            productDAO.insertProduct(name, image, price, title, description, category, sid);
+        });
+
+        assertEquals("Các giá trị chuỗi không được để trống", exception.getMessage());
+    }
+    
+     @Test
+    public void insertProduct_BelowMinOfForeignKey_NoEffect() throws Exception {
+        double price = 1;
+        int category=0,sid=0;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+        
+        productDAO.insertProduct(name, image, price, title, description, category, sid);
+        verify(preparedStatement).executeUpdate();
+    }
+    
+     @Test
+    public void insertProduct_AboveMaxOfForeignKeys_NoEffect() throws Exception {
+        double price = 1;
+        int category=8,sid=7;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+        
+        productDAO.insertProduct(name, image, price, title, description, category, sid);
+        verify(preparedStatement).executeUpdate();
+    }
+    
+     @Test
+    public void insertProduct_MinOfForeignKeys_Success() throws Exception {
+        double price = 1;
+        int category=1,sid=1;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+        
+        productDAO.insertProduct(name, image, price, title, description, category, sid);
+        
+        verify(preparedStatement,times(1)).executeUpdate();
+    }
+    
+    @Test
+    public void insertProduct_MaxOfForeignKeys_Success() throws Exception {
+        double price = 1;
+        int category=7,sid=6;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+        
+        productDAO.insertProduct(name, image, price, title, description, category, sid);
+        
+        verify(preparedStatement,times(1)).executeUpdate();
+    }
+    
+    
+    //_____________________ Test Update _____________________________
+    @Test
+    public void updateProduct_NegativeNumber_ThrowsIllegalArgumentException(){
+        double price = -1;
+        int id=-5,category=-2,sid=-3;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+        });
+
+        assertEquals("Số phải là số nguyên dương", exception.getMessage());
+    }
+    
+    @Test
+    public void updateProduct_EmptyOrNullString_ThrowsIllegalArgumentException(){
+        double price = 0;
+        int id=1, category=1,sid=1;
+        
+        String name=null, image="",title="" ,description=null;
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+        });
+
+        assertEquals("Các giá trị chuỗi không được để trống", exception.getMessage());
+    }
+    
+     @Test
+    public void updateProduct_BelowMinOfForeignKey_NoEffect() throws Exception {
+        double price = 1;
+        int id=1,category=0,sid=0;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+        
+        productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+        verify(preparedStatement).executeUpdate();
+    }
+    
+     @Test
+    public void updateProduct_AboveMaxOfForeignKeys_NoEffect() throws Exception {
+        double price = 1;
+        int id=1, category=8,sid=7;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+        
+        productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+        verify(preparedStatement).executeUpdate();
+    }
+    
+    @Test
+    public void updateProduct_BelowMinProductID_NoEffect() throws Exception {
+        double price = 1;
+        int id = 0, category = 1, sid = 1; 
+        String name = "Giày Thượng Đình", image = "abc", title = "Giày Thượng Đình mới nhất", description = "Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+
+        productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+
+        verify(preparedStatement, times(1)).executeUpdate();
+    }
+    
+    @Test
+    public void updateProduct_AboveMaxProductID_NoEffect() throws Exception {
+        double price = 1;
+        int id = 60, category = 7, sid = 6; 
+        String name = "Giày Thượng Đình", image = "abc", title = "Giày Thượng Đình mới nhất", description = "Giày chạy êm, phù hợp với tinh thần thể thao";
+
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+
+        productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+
+        verify(preparedStatement, times(1)).executeUpdate();
+    }
+    
+     @Test
+    public void updateProduct_MinOfForeignKeys_MinOfProductID_Success() throws Exception {
+        double price = 1;
+        int id=1, category=7,sid=6;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+        
+        productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+        
+        verify(preparedStatement,times(1)).executeUpdate();
+    }
+    
+    @Test
+    public void updateProduct_MaxOfForeignKeys_MaxOfProductID_Success() throws Exception {
+        double price = 1;
+        int id=60,category=1,sid=1;
+        
+        String name="Giày Thượng Đình", image="abc",title="Giày Thượng Đình mới nhất" ,description="Giày chạy êm, phù hợp với tinh thần thể thao";
+        
+        productDAO.updateProduct(id, name, image, price, title, description, category, sid);
+        
+        verify(preparedStatement,times(1)).executeUpdate();
+    }
 }

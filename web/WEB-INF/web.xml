@@ -56,6 +56,14 @@
         <servlet-name>UpdateCartServlet</servlet-name>
         <servlet-class>controller.UpdateCartServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageCategoryServlet</servlet-name>
+        <servlet-class>controller.ManageCategoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LoadCategoryServlet</servlet-name>
+        <servlet-class>controller.LoadCategoryServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -112,6 +120,14 @@
     <servlet-mapping>
         <servlet-name>UpdateCartServlet</servlet-name>
         <url-pattern>/updatecart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageCategoryServlet</servlet-name>
+        <url-pattern>/managecategory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoadCategoryServlet</servlet-name>
+        <url-pattern>/loadcategory</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/home</welcome-file>

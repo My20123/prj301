@@ -19,10 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- *
- * @author trinh
- */
+
 @WebServlet(name = "ManagerProServlet", urlPatterns = {"/managerproduct"})
 public class ManagerProServlet extends HttpServlet {
 
