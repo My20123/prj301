@@ -12,18 +12,22 @@ public class Accounts {
     private int id;
     private String user;
     private String pass;
+    private String email;
     private int isSell;
     private int isAdmin;
+    private String phone;
 
     public Accounts() {
     }
 
-    public Accounts(int id, String user, String pass, int isSell, int isAdmin) {
+    public Accounts(int id, String user, String pass, String email, int isSell, int isAdmin, String phone) {
         this.id = id;
         this.user = user;
         this.pass = pass;
+        this.email = email;
         this.isSell = isSell;
         this.isAdmin = isAdmin;
+        this.phone = phone;
     }
 
     public int getId() {
@@ -50,6 +54,14 @@ public class Accounts {
         this.pass = pass;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getIsSell() {
         return isSell;
     }
@@ -66,6 +78,16 @@ public class Accounts {
         this.isAdmin = isAdmin;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "Account{" + "id=" + id + ", user=" + user + ", pass=" + pass + ", isSell=" + isSell + ", isAdamin=" + isAdmin + '}';
