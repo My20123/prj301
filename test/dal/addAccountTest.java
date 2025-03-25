@@ -42,7 +42,7 @@ public class addAccountTest {
         driver.get("http://localhost:9999/PROJECT_PRJ301_SHOPPIN/viewA");
     }
 
-    private void fillAndSubmitForm(String name, String email, String role, String phone) throws InterruptedException {
+    private void fillAndSubmitForm(String name, String email, String role, String phone) {
         // Nhấn vào nút "Add New Account"
         WebElement addNewAccountButton = driver.findElement(By.cssSelector("a.btn.btn-success"));
         addNewAccountButton.click();
@@ -57,22 +57,20 @@ public class addAccountTest {
         WebElement phoneField = modal.findElement(By.name("phone"));
         WebElement submitButton = modal.findElement(By.cssSelector("input[type='submit']"));
 
+        // Điền dữ liệu vào các trường
         nameField.clear();
         nameField.sendKeys(name);
-        Thread.sleep(500);
 
         emailField.clear();
         emailField.sendKeys(email);
-        Thread.sleep(500);
 
         Select roleDropdown = new Select(modal.findElement(By.name("role")));
         roleDropdown.selectByVisibleText(role);
-        Thread.sleep(500);
 
         phoneField.clear();
         phoneField.sendKeys(phone);
-        Thread.sleep(500);
 
+        // Nhấn nút Submit
         submitButton.click();
     }
 
@@ -96,74 +94,73 @@ public class addAccountTest {
     }
 
     @Test(priority = 1)
-    public void testValidAccount() throws InterruptedException {
+    public void testValidAccount() {
         fillAndSubmitForm("Hoang", "hoang@gmail.com", "User", "0988765342");
         handleAlert(); // Xử lý hộp thoại thông báo
         Assert.assertEquals(driver.getCurrentUrl(), "http://localhost:9999/PROJECT_PRJ301_SHOPPIN/viewA");
     }
+
     @Test(priority = 2)
-    public void testBoundaryMin() throws InterruptedException {
+    public void testBoundaryMin() {
         fillAndSubmitForm("H", "h@gmail.com", "User", "0988765342");
-        handleAlert(); 
+        handleAlert();
         Assert.assertEquals(driver.getCurrentUrl(), "http://localhost:9999/PROJECT_PRJ301_SHOPPIN/viewA");
     }
 
     @Test(priority = 3)
-    public void testBoundaryMax() throws InterruptedException {
+    public void testBoundaryMax() {
         fillAndSubmitForm("Usernamertjkhjfghfjduhhhhhhhhh", "hoangkknwheuirieo123@gmail.com", "User", "0988765342");
-        handleAlert(); 
+        handleAlert();
         Assert.assertEquals(driver.getCurrentUrl(), "http://localhost:9999/PROJECT_PRJ301_SHOPPIN/viewA");
     }
 
     @Test(priority = 4)
-    public void testInvalidEmailFormat() throws InterruptedException {
+    public void testInvalidEmailFormat() {
         fillAndSubmitForm("Hoang", "hoang", "User", "0988765342");
         Assert.assertEquals(getErrorMessage(), "Email phai dung dinh dang @gmail.com");
     }
 
     @Test(priority = 5)
-    public void testInvalidPhoneShort() throws InterruptedException {
+    public void testInvalidPhoneShort() {
         fillAndSubmitForm("Hoang", "hoang@gmail.com", "User", "09887");
         Assert.assertEquals(getErrorMessage(), "So dien thoai phai du 10 ky tu va khong chua ky tu dac biet hay chu cai");
     }
 
     @Test(priority = 6)
-    public void testInvalidPhoneSpecialChars() throws InterruptedException {
+    public void testInvalidPhoneSpecialChars() {
         fillAndSubmitForm("Hoang", "hoang@gmail.com", "User", "0988765342abc@");
         Assert.assertEquals(getErrorMessage(), "So dien thoai phai du 10 ky tu va khong chua ky tu dac biet hay chu cai");
     }
 
     @Test(priority = 7)
-    public void testEmptyEmail() throws InterruptedException {
+    public void testEmptyEmail() {
         fillAndSubmitForm("Hoang", "", "User", "0988765342");
         Assert.assertEquals(getErrorMessage(), "Email khong duoc de trong");
     }
 
     @Test(priority = 8)
-    public void testEmptyPhone() throws InterruptedException {
+    public void testEmptyPhone() {
         fillAndSubmitForm("Hoang", "hoang@gmail.com", "User", "");
         Assert.assertEquals(getErrorMessage(), "So dien thoai khong duoc de trong");
     }
 
     @Test(priority = 9)
-    public void testEmptyName() throws InterruptedException {
+    public void testEmptyName() {
         fillAndSubmitForm("", "hoang@gmail.com", "User", "0988765342");
         Assert.assertEquals(getErrorMessage(), "Ten khong duoc de trong");
     }
 
     @Test(priority = 10)
-    public void testNameTooLong() throws InterruptedException {
+    public void testNameTooLong() {
         fillAndSubmitForm("okkkkiuytertyturieorerergggggggg", "hoang@gmail.com", "User", "0988765342");
         Assert.assertEquals(getErrorMessage(), "Ten nguoi dung khong duoc vuot qua 30 ky tu");
     }
 
     @Test(priority = 11)
-    public void testNameWithSpecialChars() throws InterruptedException {
+    public void testNameWithSpecialChars() {
         fillAndSubmitForm("okkkkiuytert11@", "hoang@gmail.com", "User", "0988765342");
         Assert.assertEquals(getErrorMessage(), "Ten nguoi dung khong duoc chua ky tu dac biet");
     }
-    
-
 
     @AfterMethod
     public void rollbackDatabase() throws Exception {
