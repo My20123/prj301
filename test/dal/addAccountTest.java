@@ -17,12 +17,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
+import java.sql.Savepoint;
+import java.sql.Statement;
 import java.time.Duration;
 
 public class addAccountTest {
 
     private WebDriver driver;
     private Connection connection;
+    private Savepoint savepoint;
 
     @BeforeClass
     public void setUp() throws Exception {
@@ -33,11 +36,14 @@ public class addAccountTest {
         // Kết nối cơ sở dữ liệu
         DBContext dbContext = new DBContext();
         connection = dbContext.getConnection();
-        connection.setAutoCommit(false); // Bật chế độ rollback
+        connection.setAutoCommit(false); // Tắt auto-commit để hỗ trợ rollback
     }
 
     @BeforeMethod
-    public void navigateToAddAccountPage() {
+    public void navigateToAddAccountPage() throws Exception {
+        // Đặt Savepoint trước khi thực hiện test
+        savepoint = connection.setSavepoint();
+
         // Điều hướng đến trang quản lý tài khoản
         driver.get("http://localhost:9999/PROJECT_PRJ301_SHOPPIN/viewA");
     }
@@ -164,14 +170,19 @@ public class addAccountTest {
 
     @AfterMethod
     public void rollbackDatabase() throws Exception {
-        // Rollback các thay đổi trong cơ sở dữ liệu
-        connection.rollback();
+        if (connection != null && savepoint != null) {
+            // Rollback về Savepoint
+            connection.rollback(savepoint);
+            System.out.println("Rollback về trạng thái trước khi test thành công!");
+        }
     }
 
     @AfterClass
     public void tearDown() throws Exception {
         // Đóng trình duyệt và kết nối cơ sở dữ liệu
         driver.quit();
-        connection.close();
+        if (connection != null) {
+            connection.close();
+        }
     }
 }

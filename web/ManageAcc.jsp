@@ -63,7 +63,59 @@
                 </table>
             </div>
         </div>
+        <div id="editEmployeeModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="editAccountForm" method="post" action="editA">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit Account</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="id" id="editId">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" name="user" id="editUser" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" name="email" id="editEmail" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="editRole">Role</label>
+                                <select name="role" id="editRole" class="form-control">
+                                    <option value="user">User</option>
+                                    <option value="seller">Seller</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" name="phone" id="editPhone" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                            <input type="submit" class="btn btn-success" value="Save">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
+        <script>
+            $(document).ready(function () {
+                $(".edit").on("click", function () {
+                    let row = $(this).closest("tr");
+                    $("#editId").val(row.find("td:eq(0)").text().trim());
+                    $("#editUser").val(row.find("td:eq(1)").text().trim());
+                    $("#editEmail").val(row.find("td:eq(2)").text().trim());
+                    $("#editPhone").val(row.find("td:eq(4)").text().trim());
+                    let role = row.find("td:eq(3)").text().trim().toLowerCase();
+                    $("#editRole").val(role);
+                });
+            });
+        </script>
 
         <div id="addEmployeeModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog">
