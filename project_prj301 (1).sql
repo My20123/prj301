@@ -20,8 +20,10 @@ CREATE TABLE Accounts (
 	[uID] [int]  IDENTITY(1,1) PRIMARY KEY,
 	[user] [varchar](255) NULL,
 	[pass] [varchar](255) NULL,
+	[email] [varchar](255) NULL,
 	[isSell] [int] NULL,
 	[isAdmin] [int] NULL,
+	[phone] [varchar] (10) NULL,
 );
 GO
 
@@ -67,14 +69,14 @@ USE PRJ_SportsShopping;
 -- Insert into the Accounts table
 DECLARE @DefaultPassword NVARCHAR(50) = N'123456';
 
-INSERT INTO Accounts ([user], [pass], [isSell], [isAdmin])
+INSERT INTO Accounts ([user], [pass],[email], [isSell], [isAdmin],[phone])
 VALUES
-    (N'Adam', N'1234', 1, 0),
-    (N'Tuan', N'12345', 1, 0),
-    (N'Kien', N'123456', 0, 1),
-    (N'Tung', N'1234567', 1, 1),
-    (N'My', N'12345678', 0, 0),
-    (N'Huyen', N'123456789', 1, 0);
+    (N'Adam', N'1234','adam@gmail.com', 1, 0,'0988765123'),
+    (N'Tuan', N'12345','adam@gmail.com', 1, 0,'0958765123'),
+    (N'Kien', N'123456','adam@gmail.com', 0, 1,'0958765123'),
+    (N'Tung', N'1234567','adam@gmail.com', 1, 1,'0938765123'),
+    (N'My', N'12345678','adam@gmail.com', 0, 0,'0968765123'),
+    (N'Huyen', N'123456789','adam@gmail.com', 1, 0,'0978765123');
 GO
 
 -- Insert categories into the Categories table

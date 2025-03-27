@@ -74,11 +74,31 @@ public class DAO {
             con = new DBContext().getConnection(); // Mở kết nối với SQL
             ps = con.prepareStatement(query);
             ps.setString(1, name);
-            ps.setString(2, pass); 
+            ps.setString(2, pass);
             ps.setString(3, email);
             ps.setInt(4, isSell);
             ps.setInt(5, isAdmin);
             ps.setString(6, phone);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+   
+
+    public void updateAccount(Accounts account) {
+        String query = "UPDATE accounts SET [user] = ?,[pass] = ?, [email] = ?, [isSell] = ?, [isAdmin] = ?, [phone] = ? WHERE uID = ?";
+        try {
+            con = new DBContext().getConnection(); // Mở kết nối với SQL
+            ps = con.prepareStatement(query);
+            ps.setString(1, account.getUser());
+            ps.setString(2, account.getPass());
+            ps.setString(3, account.getEmail());
+            ps.setInt(4, account.getIsSell());
+            ps.setInt(5, account.getIsAdmin());
+            ps.setString(6, account.getPhone());
+            ps.setInt(7, account.getId());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
